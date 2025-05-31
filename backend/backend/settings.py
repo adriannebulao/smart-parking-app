@@ -56,7 +56,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'parking_location',
-    'admin_account',
     'user_account',
     'reservation',
     'rest_framework',
@@ -155,3 +154,5 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
 ]
 CORS_ALLOW_CREDENTIALS = True
+
+ADMIN_ENABLED = False
