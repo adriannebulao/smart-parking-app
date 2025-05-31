@@ -14,7 +14,7 @@ class ParkingLocation(models.Model):
         active_count = Reservation.objects.filter(
             parking_location=self,
             start_time__lte=now,
-            start_time__gte=now,
+            end_time__gte=now,
             is_cancelled=False,
         ).count()
         return max(self.slots - active_count, 0)
