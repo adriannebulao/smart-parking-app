@@ -1,8 +1,6 @@
 from django.db import models
 from django.utils import timezone
 
-from reservation.models import Reservation
-
 
 class ParkingLocation(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -11,6 +9,7 @@ class ParkingLocation(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def available_slots(self):
+        from reservation.models import Reservation
         now = timezone.now()
         active_count = Reservation.objects.filter(
             parking_location=self,
