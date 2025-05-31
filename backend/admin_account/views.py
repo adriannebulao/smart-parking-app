@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from adminaccount.serializers import AdminTokenObtainPairSerializer
+from admin_account.serializers import AdminTokenObtainPairSerializer
 
 
 class AdminTokenObtainPairView(TokenObtainPairView):
