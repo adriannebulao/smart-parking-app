@@ -56,7 +56,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'parking_location',
+    'admin_account',
     'user_account',
+    'reservation',
     'rest_framework',
     'corsheaders',
 ]
