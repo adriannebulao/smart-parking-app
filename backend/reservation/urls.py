@@ -4,7 +4,7 @@ from .views import ReservationViewSet
 
 
 router = DefaultRouter()
-router.register('reservations', ReservationViewSet, basename='reservation')
+router.register('', ReservationViewSet, basename='reservation')
 
 urlpatterns = [
     path('', include(router.urls)),

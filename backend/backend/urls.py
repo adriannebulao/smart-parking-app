@@ -19,14 +19,14 @@ from django.urls import path, include
 from user_account.views import CreateUserView, AdminTokenObtainPairView, UserProfileView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-urlpatterns = [
-    path('api/user/register/', CreateUserView.as_view(), name='user_register'),
-    path('api/user/login/', TokenObtainPairView.as_view(), name='user_login'),
-    path('api/admin/login/', AdminTokenObtainPairView.as_view(), name='admin_login'),
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/user/profile/', UserProfileView.as_view(), name='user_profile'),
+urlpatterns = [
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger'),
+
+    path('api/admin/login/', AdminTokenObtainPairView.as_view(), name='admin_login'),
     path('api/', include('user_account.urls')),
-    path('api/', include('parking_location.urls')),
-    path('api/', include('reservation.urls')),
+    path('api/parking_locations/', include('parking_location.urls')),
+    path('api/reservations/', include('reservation.urls')),
 ]

@@ -1,4 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, permissions, mixins, filters, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied, ValidationError
@@ -19,6 +20,7 @@ from .services.summary import (
     apply_date_range_filters,
 )
 
+@extend_schema(tags=['Reservations'])
 class ReservationViewSet(
     mixins.CreateModelMixin,
     mixins.RetrieveModelMixin,
@@ -68,6 +70,7 @@ class ReservationViewSet(
         reservation.cancel()
         return Response({'detail': 'Reservation cancelled successfully.'}, status=status.HTTP_200_OK)
 
+    @extend_schema(tags=['Admin'])
     @action(detail=False, methods=['get'], url_path='summary')
     def summary(self, request):
         if not request.user.is_staff:

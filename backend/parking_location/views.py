@@ -1,7 +1,8 @@
 from django.db.models import Count, F, Q
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
-from rest_framework import viewsets, permissions, filters
+from drf_spectacular.utils import extend_schema
+from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
@@ -10,6 +11,8 @@ from .models import ParkingLocation
 from .serializers import ParkingLocationSerializer
 from .permissions import IsAdminOrReadOnly
 
+
+@extend_schema(tags=['Parking Locations'])
 
 class ParkingLocationViewSet(viewsets.ModelViewSet):
     queryset = ParkingLocation.objects.all()

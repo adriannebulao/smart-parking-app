@@ -1,22 +1,34 @@
 from django.contrib.auth.models import User
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import extend_schema
 from rest_framework import generics, viewsets, status, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from .serializers import UserSerializer, AdminTokenObtainPairSerializer, AdminUserSerializer
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 
 
+@extend_schema(tags=['Users'])
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (AllowAny,)
 
+@extend_schema(tags=['Authentication'])
+class MyTokenObtainPairView(TokenObtainPairView):
+    pass
+
+@extend_schema(tags=['Authentication'])
+class MyTokenRefreshView(TokenRefreshView):
+    pass
+
+@extend_schema(tags=['Authentication'])
 class AdminTokenObtainPairView(TokenObtainPairView):
     serializer_class = AdminTokenObtainPairSerializer
 
+@extend_schema(tags=['Users'])
 class UserProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
@@ -24,6 +36,7 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
     def get_object(self):
         return self.request.user
 
+@extend_schema(tags=['Admin'])
 class AdminUserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = AdminUserSerializer
