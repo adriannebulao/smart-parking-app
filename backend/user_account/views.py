@@ -28,6 +28,9 @@ class AdminUserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = AdminUserSerializer
     permission_classes = [IsAuthenticated, IsAdminUser]
 
+    def get_queryset(self):
+        return User.objects.filter(is_staff=False)
+
     @action(detail=True, methods=['post'], url_path='deactivate')
     def deactivate(self, request, pk=None):
         user = self.get_object()
