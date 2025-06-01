@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
-from rest_framework import generics, viewsets, status
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics, viewsets, status, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -27,6 +28,11 @@ class AdminUserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = AdminUserSerializer
     permission_classes = [IsAuthenticated, IsAdminUser]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
+
+    ordering_fields = ['id', 'username','first_name', 'last_name']
+    filterset_fields = ['id', 'is_active']
+    search_fields = ['username', 'first_name', 'last_name']
 
     def get_queryset(self):
         return User.objects.filter(is_staff=False)
