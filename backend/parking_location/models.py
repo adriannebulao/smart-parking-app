@@ -8,16 +8,19 @@ class ParkingLocation(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def available_slots(self):
+    def available_slots(self, start_time=None, end_time=None):
         from reservation.models import Reservation
         now = timezone.now()
-        active_count = Reservation.objects.filter(
+        start = start_time or now
+        end = end_time or now
+
+        overlapping = Reservation.objects.filter(
             parking_location=self,
-            start_time__lte=now,
-            end_time__gte=now,
+            start_time__lte=end,
+            end_time__gte=start,
             is_cancelled=False,
         ).count()
-        return max(self.slots - active_count, 0)
+        return max(self.slots - overlapping, 0)
 
     def __str__(self):
         return f"{self.name} ({self.slots}) slots"
