@@ -35,9 +35,21 @@ class ReservationViewSet(
 
     def get_queryset(self):
         user = self.request.user
-        if user.is_staff:
-            return Reservation.objects.all()
-        return Reservation.objects.filter(user=user)
+        queryset = Reservation.objects.all() if user.is_staff else Reservation.objects.filter(user=user)
+
+        status_param = self.request.query_params.get('status')
+        now = timezone.now()
+
+        if status_param == 'upcoming':
+            queryset = queryset.filter(end_time__gt=now, is_cancelled=False)
+        elif status_param == 'completed':
+            queryset = queryset.filter(end_time__lte=now, is_cancelled=False)
+        elif status_param == 'cancelled':
+            queryset = queryset.filter(is_cancelled=True)
+        elif status_param == 'active':
+            queryset = queryset.filter(start_time__lte=now, end_time__gte=now, is_cancelled=False)
+
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
