@@ -1,10 +1,12 @@
 import react from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Home from "./pages/Home";
-import NotFound from "./pages/NotFound";
+import UserLogin from "./pages/user/UserLogin";
+import Register from "./pages/user/Register";
+import Home from "./pages/user/Home";
+import NotFound from "./pages/user/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminHome from "./pages/admin/AdminHome";
 
 function Logout() {
   localStorage.clear();
@@ -23,12 +25,21 @@ function App() {
         <Route
           path="/"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={["user"]} key={"user"}>
               <Home />
             </ProtectedRoute>
           }
         />
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]} key={"admin"}>
+              <AdminHome />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/login" element={<UserLogin />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/register" element={<RegisterAndLogout />} />
         <Route path="*" element={<NotFound />} />

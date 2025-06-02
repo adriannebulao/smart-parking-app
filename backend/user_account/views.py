@@ -6,7 +6,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from .serializers import UserSerializer, AdminTokenObtainPairSerializer, AdminUserSerializer
+from .serializers import UserSerializer, AdminTokenObtainPairSerializer, AdminUserSerializer, \
+    CustomTokenObtainPairSerializer
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 
 
@@ -18,7 +19,7 @@ class CreateUserView(generics.CreateAPIView):
 
 @extend_schema(tags=['Authentication'])
 class MyTokenObtainPairView(TokenObtainPairView):
-    pass
+    serializer_class = CustomTokenObtainPairSerializer
 
 @extend_schema(tags=['Authentication'])
 class MyTokenRefreshView(TokenRefreshView):

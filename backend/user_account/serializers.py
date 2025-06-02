@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, AuthUser
+from rest_framework_simplejwt.tokens import Token
 
 from user_account.models import Profile
 
@@ -53,7 +54,17 @@ class UserSerializer(serializers.ModelSerializer):
 
         return instance
 
-class AdminTokenObtainPairSerializer(TokenObtainPairSerializer):
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        token['role'] = 'admin' if user.is_staff else 'user'
+        token['username'] = user.username
+
+        return token
+
+class AdminTokenObtainPairSerializer(CustomTokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
 

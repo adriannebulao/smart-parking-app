@@ -2,8 +2,9 @@ import { useState } from "react";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
+import { jwtDecode } from "jwt-decode";
 
-function Form({ route, method }) {
+function Form({ route, method, userType = "user" }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -12,7 +13,9 @@ function Form({ route, method }) {
   const navigate = useNavigate();
 
   const isLogin = method === "login";
-  const name = isLogin ? "Login" : "Register ";
+  const name = isLogin
+    ? `${userType === "admin" ? "Admin" : ""} Login`
+    : "Register ";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,9 +34,22 @@ function Form({ route, method }) {
       const res = await api.post(route, data);
 
       if (isLogin) {
-        localStorage.setItem(ACCESS_TOKEN, res.data.access);
+        const accessToken = res.data.access;
+        localStorage.setItem(ACCESS_TOKEN, accessToken);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-        navigate("/");
+
+        const decoded = jwtDecode(accessToken);
+
+        if (decoded.role !== userType) {
+          alert(
+            `Logged in user role (${decoded.role}) does not match expected (${userType})`
+          );
+          localStorage.clear();
+          setLoading(false);
+          return;
+        }
+
+        navigate(userType === "admin" ? "/admin" : "/");
       } else {
         navigate("/login");
       }
