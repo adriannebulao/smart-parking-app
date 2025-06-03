@@ -139,30 +139,27 @@ function AdminParkingLocations() {
                   <span className="font-semibold text-base truncate">
                     {loc.name}
                   </span>
-                </div>
-
-                <div className="flex items-center gap-150 flex-shrink-0">
-                  <div className="text-center text-sm text-gray-600 whitespace-nowrap max-w-[6rem]">
+                  <div className="text-sm text-gray-600 mt-1">
                     {loc.available_slots} / {loc.slots} slots
                   </div>
+                </div>
 
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        setEditing(loc);
-                        setEditForm({ name: loc.name, slots: loc.slots });
-                      }}
-                      className="text-black hover:text-gray-700"
-                    >
-                      <Pencil size={20} />
-                    </button>
-                    <button
-                      onClick={() => setConfirmDelete(loc)}
-                      className="text-black hover:text-gray-700"
-                    >
-                      <Trash size={20} />
-                    </button>
-                  </div>
+                <div className="flex gap-2 flex-shrink-0">
+                  <button
+                    onClick={() => {
+                      setEditing(loc);
+                      setEditForm({ name: loc.name, slots: loc.slots });
+                    }}
+                    className="text-black hover:text-gray-700"
+                  >
+                    <Pencil size={20} />
+                  </button>
+                  <button
+                    onClick={() => setConfirmDelete(loc)}
+                    className="text-black hover:text-gray-700"
+                  >
+                    <Trash size={20} />
+                  </button>
                 </div>
               </div>
             ))}
