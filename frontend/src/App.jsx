@@ -4,7 +4,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import UserLogin from "./pages/user/UserLogin";
 import Register from "./pages/user/Register";
-import Home from "./pages/user/Home";
+import UserHome from "./pages/user/UserHome";
 import NotFound from "./pages/user/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminLogin from "./pages/admin/AdminLogin";
@@ -27,7 +27,7 @@ function App() {
           path="/"
           element={
             <ProtectedRoute allowedRoles={["user"]} key={"user"}>
-              <Home />
+              <UserHome />
             </ProtectedRoute>
           }
         />

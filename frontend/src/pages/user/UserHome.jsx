@@ -1,7 +1,7 @@
 import TopBar from "../../components/TopBar";
 
-function Home() {
+function UserHome() {
   return <TopBar />;
 }
 
-export default Home;
+export default UserHome;
