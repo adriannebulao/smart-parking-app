@@ -44,7 +44,7 @@ class AdminUserViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated, IsAdminUser]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
 
-    ordering_fields = ['id', 'username','first_name', 'last_name']
+    ordering_fields = ['id', 'username','first_name', 'last_name', 'is_active']
     filterset_fields = ['id', 'is_active']
     search_fields = ['username', 'first_name', 'last_name']
 

@@ -16,6 +16,20 @@ function AdminUserManagement() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [search, setSearch] = useState("");
 
+  useEffect(() => {
+    let query = `/api/admin/manage-users/?search=${encodeURIComponent(search)}`;
+
+    if (statusFilter === "active") {
+      query += `&is_active=true`;
+    } else if (statusFilter === "deactivated") {
+      query += `&is_active=false`;
+    } else if (statusFilter === "all") {
+      query += `&ordering=-is_active`;
+    }
+
+    fetchUsers(query);
+  }, [statusFilter, search]);
+
   const fetchUsers = (url = "/api/admin/manage-users/") => {
     setLoading(true);
     api
@@ -35,35 +49,11 @@ function AdminUserManagement() {
   }, []);
 
   const handleFilterChange = (e) => {
-    const status = e.target.value;
-    setStatusFilter(status);
-
-    let query = `/api/admin/manage-users/?search=${encodeURIComponent(search)}`;
-
-    if (status === "active") {
-      query += `&is_active=true`;
-    } else if (status === "deactivated") {
-      query += `&is_active=false`;
-    }
-
-    fetchUsers(query);
+    setStatusFilter(e.target.value);
   };
 
   const handleSearchChange = (e) => {
-    const searchTerm = e.target.value;
-    setSearch(searchTerm);
-
-    let query = `/api/admin/manage-users/?search=${encodeURIComponent(
-      searchTerm
-    )}`;
-
-    if (statusFilter === "active") {
-      query += `&is_active=true`;
-    } else if (statusFilter === "deactivated") {
-      query += `&is_active=false`;
-    }
-
-    fetchUsers(query);
+    setSearch(e.target.value);
   };
 
   const handleDeactivate = () => {
