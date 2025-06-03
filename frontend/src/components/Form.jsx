@@ -3,22 +3,29 @@ import api from "../api";
 import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import { jwtDecode } from "jwt-decode";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Form({ route, method, userType = "user" }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState(""); // 👈 new state
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const isLogin = method === "login";
-  const name = isLogin
-    ? `${userType === "admin" ? "Admin" : ""} Login`
-    : "Register ";
+  const name = isLogin ? `${userType === "admin" ? "" : ""} Login` : "Register";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!isLogin && password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
     setLoading(true);
 
     const data = {
@@ -41,7 +48,7 @@ function Form({ route, method, userType = "user" }) {
         const decoded = jwtDecode(accessToken);
 
         if (decoded.role !== userType) {
-          alert(
+          toast.error(
             `Logged in user role (${decoded.role}) does not match expected (${userType})`
           );
           localStorage.clear();
@@ -49,60 +56,76 @@ function Form({ route, method, userType = "user" }) {
           return;
         }
 
+        toast.success("Login successful!");
         navigate(userType === "admin" ? "/admin" : "/");
       } else {
+        toast.success("Account created successfully!");
         navigate("/login");
       }
     } catch (e) {
-      console.log(e);
+      toast.error("Login failed. Please check your credentials.");
+      console.error(e);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="form-container">
-      <h1>{name}</h1>
-
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       {!isLogin && (
         <>
           <input
-            className="form-input"
             type="text"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             placeholder="First name"
             required
+            className="p-3 rounded-md bg-background-gray text-text"
           />
           <input
-            className="form-input"
             type="text"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             placeholder="Last name"
             required
+            className="p-3 rounded-md bg-background-gray text-text"
           />
         </>
       )}
-
       <input
-        className="form-input"
         type="text"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
         placeholder="Username"
         required
+        className="p-3 rounded-md bg-background-gray text-text"
       />
       <input
-        className="form-input"
         type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         placeholder="Password"
         required
+        className="p-3 rounded-md bg-background-gray text-text"
+        autoComplete="new-password"
       />
-      <button className="form-button" type="submit">
-        {name}
+      {!isLogin && (
+        <input
+          type="password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          placeholder="Confirm password"
+          required
+          className="p-3 rounded-md bg-background-gray text-text"
+          autoComplete="new-password"
+        />
+      )}
+      <button
+        type="submit"
+        disabled={loading}
+        className="bg-primary text-white py-3 rounded-md font-semibold hover:bg-accent transition"
+      >
+        {loading ? "Processing..." : name}
       </button>
     </form>
   );
