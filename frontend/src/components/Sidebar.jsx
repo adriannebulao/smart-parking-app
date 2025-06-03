@@ -1,13 +1,5 @@
-import {
-  Home,
-  MapPin,
-  CalendarCheck,
-  Users,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { Home, MapPin, CalendarCheck, Users } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
-import { useState } from "react";
 
 const navItems = [
   { name: "Home", icon: Home, path: "/admin" },
@@ -17,17 +9,10 @@ const navItems = [
 ];
 
 export default function Sidebar() {
-  const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
 
   return (
-    <div
-      className={
-        "h-full bg-background shadow-md border-r border-gray-200 flex flex-col justify-between transition-all duration-300 " +
-        (collapsed ? "w-16" : "w-60")
-      }
-    >
-      {/* Navigation */}
+    <div className="h-full w-60 bg-background shadow-md border-r border-gray-200 flex flex-col justify-between transition-all duration-300">
       <div className="mt-4 space-y-2">
         {navItems.map(({ name, icon: Icon, path }) => {
           const isActive = location.pathname === path;
@@ -43,7 +28,7 @@ export default function Sidebar() {
               }
             >
               <Icon size={20} className="min-w-[20px]" />
-              {!collapsed && <span className="text-nowrap">{name}</span>}
+              <span className="text-nowrap">{name}</span>
             </NavLink>
           );
         })}

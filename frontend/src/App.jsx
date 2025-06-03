@@ -1,4 +1,4 @@
-import react from "react";
+import react, { Suspense } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import UserLogin from "./pages/user/UserLogin";
 import Register from "./pages/user/Register";
@@ -10,6 +10,7 @@ import AdminHome from "./pages/admin/AdminHome";
 import AdminParkingLocations from "./pages/admin/AdminParkingLocations";
 import AdminReservations from "./pages/admin/AdminReservations";
 import AdminUserManagement from "./pages/admin/AdminUserManagement";
+import LoadingScreen from "./components/LoadingScreen";
 
 function RegisterAndLogout() {
   localStorage.clear();
@@ -32,6 +33,7 @@ function App() {
           path="/admin"
           element={
             <ProtectedRoute allowedRoles={["admin"]} key={"admin"}>
+              <Suspense fallback={<LoadingScreen />} />
               <AdminHome />
             </ProtectedRoute>
           }
@@ -43,6 +45,8 @@ function App() {
               allowedRoles={["admin"]}
               key={"admin-parking-locations"}
             >
+              <Suspense fallback={<LoadingScreen />} />
+
               <AdminParkingLocations />
             </ProtectedRoute>
           }
@@ -51,6 +55,8 @@ function App() {
           path="/admin/reservations"
           element={
             <ProtectedRoute allowedRoles={["admin"]} key={"admin-reservations"}>
+              <Suspense fallback={<LoadingScreen />} />
+
               <AdminReservations />
             </ProtectedRoute>
           }
@@ -62,6 +68,8 @@ function App() {
               allowedRoles={["admin"]}
               key={"admin-user-management"}
             >
+              {" "}
+              <Suspense fallback={<LoadingScreen />} />
               <AdminUserManagement />
             </ProtectedRoute>
           }
