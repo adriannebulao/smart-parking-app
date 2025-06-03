@@ -31,21 +31,24 @@ function AdminReservations() {
     fetchReservations(initialUrl);
   }, [statusFilter, search]);
 
+  const getStatus = (resv) => {
+    if (resv.is_cancelled) return "cancelled";
+
+    const now = new Date();
+    const startTime = new Date(resv.start_time);
+    const endTime = new Date(resv.end_time);
+
+    if (endTime < now) return "completed";
+    if (startTime <= now && now <= endTime) return "active";
+    if (startTime > now) return "upcoming";
+
+    return "inactive";
+  };
+
   const sortReservations = (list) => {
     if (statusFilter !== "all") return list;
 
     const order = ["active", "upcoming", "inactive", "cancelled"];
-
-    const getStatus = (resv) => {
-      if (resv.is_cancelled) return "cancelled";
-      if (resv.is_active) return "active";
-
-      const now = new Date();
-      const startTime = new Date(resv.start_time);
-      if (startTime > now) return "upcoming";
-
-      return "inactive";
-    };
 
     return [...list].sort((a, b) => {
       const statusA = getStatus(a);
@@ -171,7 +174,7 @@ function AdminReservations() {
         ) : (
           <div className="flex flex-col flex-grow space-y-2 overflow-auto">
             {reservations.map((resv) => {
-              const status = resv.is_cancelled ? "Cancelled" : null;
+              const status = getStatus(resv);
 
               return (
                 <div
@@ -194,22 +197,42 @@ function AdminReservations() {
                   </div>
 
                   <div className="flex items-center gap-6 flex-shrink-0">
-                    {status === "Cancelled" && (
+                    {status === "cancelled" && (
                       <span className="px-3 py-1 rounded text-sm font-semibold bg-red-100 text-red-800">
                         Cancelled
                       </span>
                     )}
 
-                    {!resv.is_cancelled && (
-                      <button
-                        onClick={() => setConfirmCancel(resv)}
-                        title="Cancel Reservation"
-                        className="flex items-center gap-1 text-black hover:text-gray-700"
-                      >
-                        <XCircle size={20} />
-                        <span>Cancel</span>
-                      </button>
+                    {status === "completed" && (
+                      <span className="px-3 py-1 rounded text-sm font-semibold bg-green-100 text-green-800">
+                        Completed
+                      </span>
                     )}
+
+                    {status === "active" && (
+                      <span className="px-3 py-1 rounded text-sm font-semibold bg-blue-100 text-blue-800">
+                        Active
+                      </span>
+                    )}
+
+                    {status === "upcoming" && (
+                      <span className="px-3 py-1 rounded text-sm font-semibold bg-yellow-100 text-yellow-800">
+                        Upcoming
+                      </span>
+                    )}
+
+                    {!resv.is_cancelled &&
+                      status !== "completed" &&
+                      status !== "active" && (
+                        <button
+                          onClick={() => setConfirmCancel(resv)}
+                          title="Cancel Reservation"
+                          className="flex items-center gap-1 text-black hover:text-gray-700"
+                        >
+                          <XCircle size={20} />
+                          <span>Cancel</span>
+                        </button>
+                      )}
                   </div>
                 </div>
               );
