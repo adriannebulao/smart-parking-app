@@ -8,11 +8,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminHome from "./pages/admin/AdminHome";
 
-function Logout() {
-  localStorage.clear();
-  return <Navigate to="/login" />;
-}
-
 function RegisterAndLogout() {
   localStorage.clear();
   return <Register />;
@@ -40,7 +35,6 @@ function App() {
         />
         <Route path="/login" element={<UserLogin />} />
         <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/logout" element={<Logout />} />
         <Route path="/register" element={<RegisterAndLogout />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
