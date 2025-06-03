@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronDown, LogOut } from "lucide-react";
+import { jwtDecode } from "jwt-decode";
 import whiteLogo from "../assets/white_logo.svg";
 import { getCurrentUser } from "../utils/auth";
 import "../styles/index.css";
@@ -12,6 +13,19 @@ export default function TopBar() {
   const user = getCurrentUser();
   const username = user?.username || "User";
 
+  const accessToken = localStorage.getItem("access");
+  let role = null;
+  try {
+    if (accessToken) {
+      const decoded = jwtDecode(accessToken);
+      role = decoded.role;
+    }
+  } catch (err) {
+    console.error("Failed to decode token:", err);
+  }
+
+  const title = role === "admin" ? "DAVPARK ADMIN" : "DAVPARK";
+
   const handleLogout = () => {
     localStorage.clear();
     navigate("/login");
@@ -21,9 +35,7 @@ export default function TopBar() {
     <div className="w-full bg-primary shadow px-6 py-4 flex justify-between items-center">
       <div className="flex items-center gap-2">
         <img src={whiteLogo} alt="Logo" className="h-10 w-10" />
-        <span className="text-xl font-semibold text-background">
-          DAVPARK ADMIN
-        </span>
+        <span className="text-xl font-semibold text-background">{title}</span>
       </div>
 
       <div className="relative">
