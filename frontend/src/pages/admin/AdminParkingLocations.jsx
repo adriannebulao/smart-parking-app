@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../../api";
 import AdminLayout from "../../layouts/AdminLayout";
-import { Pencil, Trash } from "lucide-react";
+import { Pencil, Trash, Plus } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -13,6 +13,8 @@ function AdminParkingLocations() {
   const [currentUrl, setCurrentUrl] = useState("/api/parking_locations/");
   const [editing, setEditing] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
+  const [creating, setCreating] = useState(false);
+  const [createForm, setCreateForm] = useState({ name: "", slots: "" });
 
   const [editForm, setEditForm] = useState({ name: "", slots: "" });
 
@@ -34,6 +36,17 @@ function AdminParkingLocations() {
   useEffect(() => {
     fetchLocations(currentUrl);
   }, []);
+
+  const handleCreate = () => {
+    api
+      .post("/api/parking_locations/", createForm)
+      .then(() => {
+        toast.success("Parking location created!");
+        fetchLocations(currentUrl);
+        setCreating(false);
+      })
+      .catch(() => toast.error("Failed to create."));
+  };
 
   const handleEdit = () => {
     api
@@ -60,9 +73,19 @@ function AdminParkingLocations() {
   return (
     <AdminLayout>
       <div className="p-4 h-screen flex flex-col">
-        <h1 className="text-xl font-bold mb-4 flex-shrink-0">
-          Parking Locations
-        </h1>
+        <div className="flex justify-between items-center mb-4 flex-shrink-0">
+          <h1 className="text-xl font-bold">Parking Locations</h1>
+          <button
+            onClick={() => {
+              setCreating(true);
+              setCreateForm({ name: "", slots: "" });
+            }}
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark"
+          >
+            <Plus size={16} />
+            New Parking Location
+          </button>
+        </div>
 
         {loading ? (
           <p>Loading...</p>
@@ -73,11 +96,13 @@ function AdminParkingLocations() {
                 key={loc.id}
                 className="flex items-center justify-between bg-white p-4 rounded-lg shadow border"
               >
-                <span className="font-semibold text-base">{loc.name}</span>
-                <span className="text-sm text-gray-600 whitespace-nowrap">
+                <div className="flex-1">
+                  <span className="font-semibold text-base">{loc.name}</span>
+                </div>
+                <div className="w-32 text-right text-sm text-gray-600 whitespace-nowrap">
                   {loc.available_slots} / {loc.slots} slots
-                </span>
-                <div className="flex gap-2">
+                </div>
+                <div className="flex gap-2 ml-150">
                   <button
                     onClick={() => {
                       setEditing(loc);
@@ -186,6 +211,54 @@ function AdminParkingLocations() {
           >
             <h2 className="text-lg font-bold mb-4">Confirm Delete</h2>
             <p>Are you sure you want to delete "{confirmDelete.name}"?</p>
+          </Modal>
+        )}
+
+        {creating && (
+          <Modal
+            isOpen={!!creating}
+            onClose={() => setCreating(false)}
+            footer={
+              <>
+                <button
+                  onClick={() => setCreating(false)}
+                  className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleCreate}
+                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                >
+                  Create
+                </button>
+              </>
+            }
+          >
+            <h2 className="text-lg font-bold mb-4">New Parking Location</h2>
+            <div className="space-y-3">
+              <input
+                type="text"
+                placeholder="Name"
+                value={createForm.name}
+                onChange={(e) =>
+                  setCreateForm({ ...createForm, name: e.target.value })
+                }
+                className="w-full border rounded p-2"
+              />
+              <input
+                type="number"
+                placeholder="Slots"
+                value={createForm.slots}
+                onChange={(e) =>
+                  setCreateForm({
+                    ...createForm,
+                    slots: Number(e.target.value),
+                  })
+                }
+                className="w-full border rounded p-2"
+              />
+            </div>
           </Modal>
         )}
 
