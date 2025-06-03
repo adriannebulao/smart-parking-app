@@ -5,7 +5,11 @@ const navItems = [
   { name: "Home", icon: Home, path: "/admin" },
   { name: "Parking Locations", icon: MapPin, path: "/admin/parking-locations" },
   { name: "Reservations", icon: CalendarCheck, path: "/admin/reservations" },
-  { name: "User Management", icon: Users, path: "/admin/user-management" },
+  {
+    name: "User Management",
+    icon: Users,
+    path: "/admin/user-management?ordering=-is_active",
+  },
 ];
 
 export default function AdminSidebar() {
