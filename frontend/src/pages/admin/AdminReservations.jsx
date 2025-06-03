@@ -41,6 +41,13 @@ function AdminReservations() {
 
   const fetchReservations = (url = "/api/reservations/") => {
     setLoading(true);
+
+    if (statusFilter === "all" && !url.includes("ordering=")) {
+      url += url.includes("?")
+        ? "&ordering=is_cancelled"
+        : "?ordering=is_cancelled";
+    }
+
     api
       .get(url)
       .then((res) => {
@@ -54,27 +61,39 @@ function AdminReservations() {
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => {
-    fetchReservations(currentUrl);
-  }, []);
-
   const handleFilterChange = (e) => {
     const status = e.target.value;
     setStatusFilter(status);
-    const query =
-      status === "all"
-        ? `/api/reservations/?search=${search}`
-        : `/api/reservations/?status=${status}&search=${search}`;
+
+    let query = "/api/reservations/";
+
+    if (status === "all") {
+      query += search
+        ? `?search=${encodeURIComponent(search)}&ordering=is_cancelled`
+        : "?ordering=is_cancelled";
+    } else {
+      query += `?status=${encodeURIComponent(status)}`;
+      if (search) query += `&search=${encodeURIComponent(search)}`;
+    }
+
     fetchReservations(query);
   };
 
   const handleSearchChange = (e) => {
     const searchTerm = e.target.value;
     setSearch(searchTerm);
-    const query =
-      statusFilter === "all"
-        ? `/api/reservations/?search=${searchTerm}`
-        : `/api/reservations/?status=${statusFilter}&search=${searchTerm}`;
+
+    let query = "/api/reservations/";
+
+    if (statusFilter === "all") {
+      query += searchTerm
+        ? `?search=${encodeURIComponent(searchTerm)}&ordering=is_cancelled`
+        : "?ordering=is_cancelled";
+    } else {
+      query += `?status=${encodeURIComponent(statusFilter)}`;
+      if (searchTerm) query += `&search=${encodeURIComponent(searchTerm)}`;
+    }
+
     fetchReservations(query);
   };
 
