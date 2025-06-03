@@ -16,6 +16,21 @@ function AdminReservations() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [search, setSearch] = useState("");
 
+  useEffect(() => {
+    let initialUrl = "/api/reservations/";
+
+    if (statusFilter === "all") {
+      initialUrl += search
+        ? `?search=${encodeURIComponent(search)}&ordering=is_cancelled`
+        : "?ordering=is_cancelled";
+    } else {
+      initialUrl += `?status=${encodeURIComponent(statusFilter)}`;
+      if (search) initialUrl += `&search=${encodeURIComponent(search)}`;
+    }
+
+    fetchReservations(initialUrl);
+  }, [statusFilter, search]);
+
   const sortReservations = (list) => {
     if (statusFilter !== "all") return list;
 
