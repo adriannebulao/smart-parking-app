@@ -51,7 +51,6 @@ function AdminParkingLocations() {
       .finally(() => setLoading(false));
   };
 
-  // Debounced fetch function
   const debouncedFetch = useCallback(
     debounce((value) => {
       fetchLocations("/api/parking_locations/", value);
@@ -59,7 +58,6 @@ function AdminParkingLocations() {
     []
   );
 
-  // Run fetch on mount and on search changes
   useEffect(() => {
     debouncedFetch(search);
   }, [search, debouncedFetch]);

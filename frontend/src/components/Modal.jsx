@@ -22,3 +22,5 @@ function Modal({ isOpen, onClose, children, footer }) {
     </div>
   );
 }
+
+export default Modal;
