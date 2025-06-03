@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import api from "../../api";
 import AdminLayout from "../../layouts/AdminLayout";
 import { Pencil, Trash } from "lucide-react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function AdminParkingLocations() {
   const [locations, setLocations] = useState([]);
@@ -9,29 +11,51 @@ function AdminParkingLocations() {
   const [nextUrl, setNextUrl] = useState(null);
   const [prevUrl, setPrevUrl] = useState(null);
   const [currentUrl, setCurrentUrl] = useState("/api/parking_locations/");
+  const [editing, setEditing] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState(null);
+
+  const [editForm, setEditForm] = useState({ name: "", slots: "" });
 
   const fetchLocations = (url) => {
     if (!url) return;
     setLoading(true);
     api
       .get(url)
-      .then((response) => {
-        setLocations(response.data.results);
-        setNextUrl(response.data.next);
-        setPrevUrl(response.data.previous);
+      .then((res) => {
+        setLocations(res.data.results);
+        setNextUrl(res.data.next);
+        setPrevUrl(res.data.previous);
         setCurrentUrl(url);
       })
-      .catch((error) => {
-        console.error("Error fetching parking locations:", error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+      .catch(console.error)
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
     fetchLocations(currentUrl);
   }, []);
+
+  const handleEdit = () => {
+    api
+      .put(`/api/parking_locations/${editing.id}/`, editForm)
+      .then(() => {
+        toast.success("Parking location updated!");
+        fetchLocations(currentUrl);
+        setEditing(null);
+      })
+      .catch(() => toast.error("Failed to update."));
+  };
+
+  const handleDelete = () => {
+    api
+      .delete(`/api/parking_locations/${confirmDelete.id}/`)
+      .then(() => {
+        toast.success("Parking location deleted.");
+        fetchLocations(currentUrl);
+        setConfirmDelete(null);
+      })
+      .catch(() => toast.error("Failed to delete."));
+  };
 
   return (
     <AdminLayout>
@@ -54,10 +78,19 @@ function AdminParkingLocations() {
                   {loc.available_slots} / {loc.slots} slots
                 </span>
                 <div className="flex gap-2">
-                  <button className="text-black hover:text-gray-700">
+                  <button
+                    onClick={() => {
+                      setEditing(loc);
+                      setEditForm({ name: loc.name, slots: loc.slots });
+                    }}
+                    className="text-black hover:text-gray-700"
+                  >
                     <Pencil size={20} />
                   </button>
-                  <button className="text-black hover:text-gray-700">
+                  <button
+                    onClick={() => setConfirmDelete(loc)}
+                    className="text-black hover:text-gray-700"
+                  >
                     <Trash size={20} />
                   </button>
                 </div>
@@ -82,8 +115,108 @@ function AdminParkingLocations() {
             </div>
           </div>
         )}
+
+        {/* Edit Modal */}
+        {editing && (
+          <Modal
+            isOpen={!!editing}
+            onClose={() => setEditing(null)}
+            footer={
+              <>
+                <button
+                  onClick={() => setEditing(null)}
+                  className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleEdit}
+                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                  Save Changes
+                </button>
+              </>
+            }
+          >
+            <h2 className="text-lg font-bold mb-4">Edit Location</h2>
+            <div className="space-y-3">
+              <input
+                type="text"
+                placeholder="Name"
+                value={editForm.name}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, name: e.target.value })
+                }
+                className="w-full border rounded p-2"
+              />
+              <input
+                type="number"
+                placeholder="Slots"
+                value={editForm.slots}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, slots: Number(e.target.value) })
+                }
+                className="w-full border rounded p-2"
+              />
+            </div>
+          </Modal>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {confirmDelete && (
+          <Modal
+            isOpen={!!confirmDelete}
+            onClose={() => setConfirmDelete(null)}
+            footer={
+              <>
+                <button
+                  onClick={() => setConfirmDelete(null)}
+                  className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                >
+                  Delete
+                </button>
+              </>
+            }
+          >
+            <h2 className="text-lg font-bold mb-4">Confirm Delete</h2>
+            <p>Are you sure you want to delete "{confirmDelete.name}"?</p>
+          </Modal>
+        )}
+
+        <ToastContainer />
       </div>
     </AdminLayout>
+  );
+}
+
+function Modal({ isOpen, onClose, children, footer }) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
+        <div>{children}</div>
+
+        <div className="flex justify-end gap-2 mt-6">
+          {footer ? (
+            footer
+          ) : (
+            <button
+              onClick={onClose}
+              className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+            >
+              Cancel
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 
