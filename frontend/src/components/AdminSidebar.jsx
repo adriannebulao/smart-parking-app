@@ -8,7 +8,7 @@ const navItems = [
   {
     name: "User Management",
     icon: Users,
-    path: "/admin/user-management?ordering=-is_active",
+    path: "/admin/user-management",
   },
 ];
 

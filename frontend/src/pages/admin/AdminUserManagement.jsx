@@ -11,7 +11,9 @@ function AdminUserManagement() {
   const [loading, setLoading] = useState(true);
   const [nextUrl, setNextUrl] = useState(null);
   const [prevUrl, setPrevUrl] = useState(null);
-  const [currentUrl, setCurrentUrl] = useState("/api/admin/manage-users/");
+  const [currentUrl, setCurrentUrl] = useState(
+    "/api/admin/manage-users/?ordering=-is_active"
+  );
   const [confirmDeactivate, setConfirmDeactivate] = useState(null);
   const [statusFilter, setStatusFilter] = useState("all");
   const [search, setSearch] = useState("");
