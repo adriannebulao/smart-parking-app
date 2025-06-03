@@ -1,11 +1,11 @@
 import AdminLayout from "../../layouts/AdminLayout";
 
-function AdminHome() {
+function AdminReservations() {
   return (
     <AdminLayout>
-      <h1>ADMIN HOME</h1>
+      <h1>ADMIN RESERVATIONS</h1>
     </AdminLayout>
   );
 }
 
-export default AdminHome;
+export default AdminReservations;

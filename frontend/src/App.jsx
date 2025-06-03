@@ -7,6 +7,9 @@ import NotFound from "./pages/user/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminHome from "./pages/admin/AdminHome";
+import AdminParkingLocations from "./pages/admin/AdminParkingLocations";
+import AdminReservations from "./pages/admin/AdminReservations";
+import AdminUserManagement from "./pages/admin/AdminUserManagement";
 
 function RegisterAndLogout() {
   localStorage.clear();
@@ -30,6 +33,36 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={["admin"]} key={"admin"}>
               <AdminHome />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/parking-locations"
+          element={
+            <ProtectedRoute
+              allowedRoles={["admin"]}
+              key={"admin-parking-locations"}
+            >
+              <AdminParkingLocations />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/reservations"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]} key={"admin-reservations"}>
+              <AdminReservations />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/user-management"
+          element={
+            <ProtectedRoute
+              allowedRoles={["admin"]}
+              key={"admin-user-management"}
+            >
+              <AdminUserManagement />
             </ProtectedRoute>
           }
         />

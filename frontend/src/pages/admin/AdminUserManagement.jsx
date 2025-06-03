@@ -1,11 +1,11 @@
 import AdminLayout from "../../layouts/AdminLayout";
 
-function AdminHome() {
+function AdminUserManagement() {
   return (
     <AdminLayout>
-      <h1>ADMIN HOME</h1>
+      <h1>ADMIN USER MANAGEMENT</h1>
     </AdminLayout>
   );
 }
 
-export default AdminHome;
+export default AdminUserManagement;
