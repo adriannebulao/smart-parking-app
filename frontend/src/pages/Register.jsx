@@ -1,6 +1,6 @@
-import Form from "../../components/Form";
-import logo from "../../assets/logo.svg";
-import "../../styles/index.css";
+import Form from "../components/Form";
+import logo from "../assets/logo.svg";
+import "../styles/index.css";
 import { Link } from "react-router-dom";
 import { LogIn } from "lucide-react";
 

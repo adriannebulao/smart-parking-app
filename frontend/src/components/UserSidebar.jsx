@@ -1,14 +1,14 @@
-import { Home, MapPin, CalendarCheck, Users } from "lucide-react";
+import { Home, MapPin, CalendarCheck, User } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 
 const navItems = [
-  { name: "Home", icon: Home, path: "/admin" },
-  { name: "Parking Locations", icon: MapPin, path: "/admin/parking-locations" },
-  { name: "Reservations", icon: CalendarCheck, path: "/admin/reservations" },
-  { name: "User Management", icon: Users, path: "/admin/user-management" },
+  { name: "Home", icon: Home, path: "/" },
+  { name: "Parking Locations", icon: MapPin, path: "/user/parking-locations" },
+  { name: "Reservations", icon: CalendarCheck, path: "/user/reservations" },
+  { name: "Profile", icon: User, path: "/user/profile" },
 ];
 
-export default function Sidebar() {
+export default function UserSidebar() {
   const location = useLocation();
 
   return (
@@ -28,7 +28,7 @@ export default function Sidebar() {
               }
             >
               <Icon size={20} className="min-w-[20px]" />
-              <span className="text-nowrap">{name}</span>
+              <span className="whitespace-nowrap">{name}</span>
             </NavLink>
           );
         })}

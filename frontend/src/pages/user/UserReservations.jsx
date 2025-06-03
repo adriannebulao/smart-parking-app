@@ -1,11 +1,11 @@
 import UserLayout from "../../layouts/UserLayout";
 
-function UserHome() {
+function UserReservations() {
   return (
     <UserLayout>
-      <h1>User Home</h1>
+      <h1>User Reservations</h1>
     </UserLayout>
   );
 }
 
-export default UserHome;
+export default UserReservations;

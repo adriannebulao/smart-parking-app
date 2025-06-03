@@ -3,15 +3,18 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import UserLogin from "./pages/user/UserLogin";
-import Register from "./pages/user/Register";
+import Register from "./pages/Register";
 import UserHome from "./pages/user/UserHome";
-import NotFound from "./pages/user/NotFound";
+import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminHome from "./pages/admin/AdminHome";
 import AdminParkingLocations from "./pages/admin/AdminParkingLocations";
 import AdminReservations from "./pages/admin/AdminReservations";
 import AdminUserManagement from "./pages/admin/AdminUserManagement";
+import UserParkingLocations from "./pages/user/UserParkingLocations";
+import UserReservations from "./pages/user/UserReservations";
+import UserProfile from "./pages/user/UserProfile";
 
 function RegisterAndLogout() {
   localStorage.clear();
@@ -28,6 +31,33 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={["user"]} key={"user"}>
               <UserHome />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user/parking-locations"
+          element={
+            <ProtectedRoute
+              allowedRoles={["user"]}
+              key={"user-parking-locations"}
+            >
+              <UserParkingLocations />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user/reservations"
+          element={
+            <ProtectedRoute allowedRoles={["user"]} key={"user-reservations"}>
+              <UserReservations />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user/profile"
+          element={
+            <ProtectedRoute allowedRoles={["user"]} key={"user-profile"}>
+              <UserProfile />
             </ProtectedRoute>
           }
         />
