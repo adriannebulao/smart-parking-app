@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import api from "../../api";
 import AdminLayout from "../../layouts/AdminLayout";
-import { Pencil, Trash, Plus } from "lucide-react";
+import { Search, Pencil, Trash, Plus } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -15,14 +15,32 @@ function AdminParkingLocations() {
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [creating, setCreating] = useState(false);
   const [createForm, setCreateForm] = useState({ name: "", slots: "" });
-
   const [editForm, setEditForm] = useState({ name: "", slots: "" });
+  const [search, setSearch] = useState("");
 
-  const fetchLocations = (url) => {
+  const debounce = (func, delay) => {
+    let timer;
+    return (...args) => {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => {
+        func(...args);
+      }, delay);
+    };
+  };
+
+  const fetchLocations = (url, searchTerm = "") => {
     if (!url) return;
     setLoading(true);
+
+    let fullUrl = url;
+    if (searchTerm) {
+      fullUrl += fullUrl.includes("?")
+        ? `&search=${encodeURIComponent(searchTerm)}`
+        : `?search=${encodeURIComponent(searchTerm)}`;
+    }
+
     api
-      .get(url)
+      .get(fullUrl)
       .then((res) => {
         setLocations(res.data.results);
         setNextUrl(res.data.next);
@@ -33,16 +51,25 @@ function AdminParkingLocations() {
       .finally(() => setLoading(false));
   };
 
+  // Debounced fetch function
+  const debouncedFetch = useCallback(
+    debounce((value) => {
+      fetchLocations("/api/parking_locations/", value);
+    }, 400),
+    []
+  );
+
+  // Run fetch on mount and on search changes
   useEffect(() => {
-    fetchLocations(currentUrl);
-  }, []);
+    debouncedFetch(search);
+  }, [search, debouncedFetch]);
 
   const handleCreate = () => {
     api
       .post("/api/parking_locations/", createForm)
       .then(() => {
         toast.success("Parking location created!");
-        fetchLocations(currentUrl);
+        fetchLocations(currentUrl, search);
         setCreating(false);
       })
       .catch(() => toast.error("Failed to create."));
@@ -53,7 +80,7 @@ function AdminParkingLocations() {
       .put(`/api/parking_locations/${editing.id}/`, editForm)
       .then(() => {
         toast.success("Parking location updated!");
-        fetchLocations(currentUrl);
+        fetchLocations(currentUrl, search);
         setEditing(null);
       })
       .catch(() => toast.error("Failed to update."));
@@ -64,7 +91,7 @@ function AdminParkingLocations() {
       .delete(`/api/parking_locations/${confirmDelete.id}/`)
       .then(() => {
         toast.success("Parking location deleted.");
-        fetchLocations(currentUrl);
+        fetchLocations(currentUrl, search);
         setConfirmDelete(null);
       })
       .catch(() => toast.error("Failed to delete."));
@@ -73,14 +100,28 @@ function AdminParkingLocations() {
   return (
     <AdminLayout>
       <div className="p-4 h-screen flex flex-col">
-        <div className="flex justify-between items-center mb-4 flex-shrink-0">
-          <h1 className="text-xl font-bold">Parking Locations</h1>
+        <div className="flex justify-between items-center mb-4 flex-shrink-0 gap-4">
+          <h1 className="text-xl font-bold whitespace-nowrap">
+            Parking Locations
+          </h1>
+
+          <div className="relative flex items-center flex-grow max-w-xs">
+            <Search className="absolute left-3 text-gray-400" size={16} />
+            <input
+              type="text"
+              placeholder="Search by name..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-8 pr-3 py-1 border rounded w-full"
+            />
+          </div>
+
           <button
             onClick={() => {
               setCreating(true);
               setCreateForm({ name: "", slots: "" });
             }}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark"
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark whitespace-nowrap"
           >
             <Plus size={16} />
             New Parking Location
@@ -96,42 +137,48 @@ function AdminParkingLocations() {
                 key={loc.id}
                 className="flex items-center justify-between bg-white p-4 rounded-lg shadow border"
               >
-                <div className="flex-1">
-                  <span className="font-semibold text-base">{loc.name}</span>
+                <div className="flex-grow min-w-0">
+                  <span className="font-semibold text-base truncate">
+                    {loc.name}
+                  </span>
                 </div>
-                <div className="w-32 text-right text-sm text-gray-600 whitespace-nowrap">
-                  {loc.available_slots} / {loc.slots} slots
-                </div>
-                <div className="flex gap-2 ml-150">
-                  <button
-                    onClick={() => {
-                      setEditing(loc);
-                      setEditForm({ name: loc.name, slots: loc.slots });
-                    }}
-                    className="text-black hover:text-gray-700"
-                  >
-                    <Pencil size={20} />
-                  </button>
-                  <button
-                    onClick={() => setConfirmDelete(loc)}
-                    className="text-black hover:text-gray-700"
-                  >
-                    <Trash size={20} />
-                  </button>
+
+                <div className="flex items-center gap-150 flex-shrink-0">
+                  <div className="text-center text-sm text-gray-600 whitespace-nowrap max-w-[6rem]">
+                    {loc.available_slots} / {loc.slots} slots
+                  </div>
+
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        setEditing(loc);
+                        setEditForm({ name: loc.name, slots: loc.slots });
+                      }}
+                      className="text-black hover:text-gray-700"
+                    >
+                      <Pencil size={20} />
+                    </button>
+                    <button
+                      onClick={() => setConfirmDelete(loc)}
+                      className="text-black hover:text-gray-700"
+                    >
+                      <Trash size={20} />
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
 
             <div className="flex justify-end gap-4 mt-4">
               <button
-                onClick={() => fetchLocations(prevUrl)}
+                onClick={() => fetchLocations(prevUrl, search)}
                 disabled={!prevUrl || loading}
                 className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
               >
                 Previous
               </button>
               <button
-                onClick={() => fetchLocations(nextUrl)}
+                onClick={() => fetchLocations(nextUrl, search)}
                 disabled={!nextUrl || loading}
                 className="px-4 py-2 bg-primary text-white rounded disabled:opacity-50"
               >
@@ -214,6 +261,7 @@ function AdminParkingLocations() {
           </Modal>
         )}
 
+        {/* Create Modal */}
         {creating && (
           <Modal
             isOpen={!!creating}
