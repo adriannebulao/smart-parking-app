@@ -1,10 +1,16 @@
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 import AdminLayout from "../../layouts/AdminLayout";
-import { XCircle } from "lucide-react";
 import Modal from "../../components/Modal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ReservationCard from "../../components/ReservationCard";
+import { buildReservationUrl } from "../../utils/urlBuilder";
+import {
+  sortReservations,
+  getStatus,
+  formatDateTime,
+} from "../../utils/reservationUtils";
 
 function AdminReservations() {
   const [reservations, setReservations] = useState([]);
@@ -17,59 +23,19 @@ function AdminReservations() {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    let initialUrl = "/api/reservations/";
-
-    if (statusFilter === "all") {
-      initialUrl += search
-        ? `?search=${encodeURIComponent(search)}&ordering=is_cancelled`
-        : "?ordering=is_cancelled";
-    } else {
-      initialUrl += `?status=${encodeURIComponent(statusFilter)}`;
-      if (search) initialUrl += `&search=${encodeURIComponent(search)}`;
-    }
-
-    fetchReservations(initialUrl);
+    fetchReservations(buildReservationUrl(statusFilter, search));
   }, [statusFilter, search]);
 
-  const getStatus = (resv) => {
-    if (resv.is_cancelled) return "cancelled";
-
-    const now = new Date();
-    const startTime = new Date(resv.start_time);
-    const endTime = new Date(resv.end_time);
-
-    if (endTime < now) return "completed";
-    if (startTime <= now && now <= endTime) return "active";
-    if (startTime > now) return "upcoming";
-
-    return "inactive";
-  };
-
-  const sortReservations = (list) => {
-    if (statusFilter !== "all") return list;
-
-    const order = ["active", "upcoming", "inactive", "cancelled"];
-
-    return [...list].sort((a, b) => {
-      const statusA = getStatus(a);
-      const statusB = getStatus(b);
-      return order.indexOf(statusA) - order.indexOf(statusB);
-    });
-  };
-
-  const fetchReservations = (url = "/api/reservations/") => {
+  const fetchReservations = (url) => {
     setLoading(true);
-
-    if (statusFilter === "all" && !url.includes("ordering=")) {
-      url += url.includes("?")
-        ? "&ordering=is_cancelled"
-        : "?ordering=is_cancelled";
-    }
-
     api
       .get(url)
       .then((res) => {
-        const sorted = sortReservations(res.data.results);
+        const sorted = sortReservations(
+          res.data.results,
+          getStatus,
+          statusFilter
+        );
         setReservations(sorted);
         setCurrentUrl(url);
         setNextUrl(res.data.next);
@@ -79,45 +45,8 @@ function AdminReservations() {
       .finally(() => setLoading(false));
   };
 
-  const handleFilterChange = (e) => {
-    const status = e.target.value;
-    setStatusFilter(status);
-
-    let query = "/api/reservations/";
-
-    if (status === "all") {
-      query += search
-        ? `?search=${encodeURIComponent(search)}&ordering=is_cancelled`
-        : "?ordering=is_cancelled";
-    } else {
-      query += `?status=${encodeURIComponent(status)}`;
-      if (search) query += `&search=${encodeURIComponent(search)}`;
-    }
-
-    fetchReservations(query);
-  };
-
-  const handleSearchChange = (e) => {
-    const searchTerm = e.target.value;
-    setSearch(searchTerm);
-
-    let query = "/api/reservations/";
-
-    if (statusFilter === "all") {
-      query += searchTerm
-        ? `?search=${encodeURIComponent(searchTerm)}&ordering=is_cancelled`
-        : "?ordering=is_cancelled";
-    } else {
-      query += `?status=${encodeURIComponent(statusFilter)}`;
-      if (searchTerm) query += `&search=${encodeURIComponent(searchTerm)}`;
-    }
-
-    fetchReservations(query);
-  };
-
   const handleCancel = () => {
     if (!confirmCancel) return;
-
     api
       .post(`/api/reservations/${confirmCancel.id}/cancel/`)
       .then(() => {
@@ -128,35 +57,24 @@ function AdminReservations() {
       .catch(() => toast.error("Failed to cancel reservation."));
   };
 
-  const formatDateTime = (isoString) => {
-    const date = new Date(isoString);
-    return date.toLocaleString(undefined, {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   return (
     <AdminLayout>
       <div className="p-4 h-screen flex flex-col">
+        {/* Header & Controls */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <h2 className="text-xl font-bold mb-4">Reservations</h2>
-
           <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full sm:w-auto">
             <input
               type="text"
               placeholder="Search by username or location"
               className="border px-3 py-2 rounded-md w-full sm:w-72"
               value={search}
-              onChange={handleSearchChange}
+              onChange={(e) => setSearch(e.target.value)}
             />
             <select
               className="border px-3 py-2 rounded-md w-full sm:w-48"
               value={statusFilter}
-              onChange={handleFilterChange}
+              onChange={(e) => setStatusFilter(e.target.value)}
             >
               <option value="all">All</option>
               <option value="active">Active</option>
@@ -167,76 +85,20 @@ function AdminReservations() {
           </div>
         </div>
 
+        {/* Main Content */}
         {loading ? (
           <p>Loading...</p>
         ) : reservations.length === 0 ? (
           <p>No reservations found.</p>
         ) : (
           <div className="flex flex-col flex-grow space-y-2 overflow-auto">
-            {reservations.map((resv) => {
-              const status = getStatus(resv);
-
-              return (
-                <div
-                  key={resv.id}
-                  className="flex items-center justify-between bg-white p-4 rounded-lg shadow border"
-                >
-                  <div className="flex-grow min-w-0 space-y-1">
-                    <p className="font-semibold text-base truncate">
-                      {resv.parking_location_name}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      Start: {formatDateTime(resv.start_time)}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      End: {formatDateTime(resv.end_time)}
-                    </p>
-                    <p className="text-sm text-gray-700 font-medium">
-                      User: {resv.user_username}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-6 flex-shrink-0">
-                    {status === "cancelled" && (
-                      <span className="px-3 py-1 rounded text-sm font-semibold bg-red-100 text-red-800">
-                        Cancelled
-                      </span>
-                    )}
-
-                    {status === "completed" && (
-                      <span className="px-3 py-1 rounded text-sm font-semibold bg-green-100 text-green-800">
-                        Completed
-                      </span>
-                    )}
-
-                    {status === "active" && (
-                      <span className="px-3 py-1 rounded text-sm font-semibold bg-blue-100 text-blue-800">
-                        Active
-                      </span>
-                    )}
-
-                    {status === "upcoming" && (
-                      <span className="px-3 py-1 rounded text-sm font-semibold bg-yellow-100 text-yellow-800">
-                        Upcoming
-                      </span>
-                    )}
-
-                    {!resv.is_cancelled &&
-                      status !== "completed" &&
-                      status !== "active" && (
-                        <button
-                          onClick={() => setConfirmCancel(resv)}
-                          title="Cancel Reservation"
-                          className="flex items-center gap-1 text-black hover:text-gray-700"
-                        >
-                          <XCircle size={20} />
-                          <span>Cancel</span>
-                        </button>
-                      )}
-                  </div>
-                </div>
-              );
-            })}
+            {reservations.map((resv) => (
+              <ReservationCard
+                key={resv.id}
+                resv={resv}
+                onCancel={setConfirmCancel}
+              />
+            ))}
 
             <div className="flex justify-end gap-4 mt-4">
               <button
@@ -257,6 +119,7 @@ function AdminReservations() {
           </div>
         )}
 
+        {/* Cancel Confirmation Modal */}
         {confirmCancel && (
           <Modal
             isOpen={!!confirmCancel}
