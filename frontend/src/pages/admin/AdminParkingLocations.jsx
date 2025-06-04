@@ -1,8 +1,7 @@
-import react, { useEffect, useState, useCallback } from "react";
+import react, { useState } from "react";
 import AdminLayout from "../../layouts/AdminLayout";
 import { Plus } from "lucide-react";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
 import SearchInput from "../../components/SearchInput";
 import ParkingLocationCard from "../../components/admin/ParkingLocationCard";
@@ -10,84 +9,46 @@ import ParkingLocationModal from "../../components/admin/ParkingLocationModal";
 import ConfirmActionModal from "../../components/ConfirmActionModal";
 import PaginationControls from "../../components/PaginationControls";
 
-import {
-  getParkingLocations,
-  createParkingLocation,
-  updateParkingLocation,
-  deleteParkingLocation,
-} from "../../services/admin/parkingLocationService";
+import { useParkingLocations } from "../../hooks/admin/useParkingLocations";
 
 function AdminParkingLocations() {
-  const [locations, setLocations] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [nextUrl, setNextUrl] = useState(null);
-  const [prevUrl, setPrevUrl] = useState(null);
-  const [currentUrl, setCurrentUrl] = useState("/api/parking_locations/");
-  const [search, setSearch] = useState("");
+  const {
+    locations,
+    loading,
+    nextUrl,
+    prevUrl,
+    search,
+    setSearch,
+    fetchLocations,
+    create,
+    update,
+    remove,
+  } = useParkingLocations();
+
   const [createForm, setCreateForm] = useState({ name: "", slots: "" });
   const [editForm, setEditForm] = useState({ name: "", slots: "" });
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
 
-  const debounce = (func, delay) => {
-    let timer;
-    return (...args) => {
-      clearTimeout(timer);
-      timer = setTimeout(() => func(...args), delay);
-    };
-  };
-
-  const fetchLocations = (url, searchTerm = "") => {
-    setLoading(true);
-    getParkingLocations(url, searchTerm)
-      .then((res) => {
-        setLocations(res.data.results);
-        setNextUrl(res.data.next);
-        setPrevUrl(res.data.previous);
-        setCurrentUrl(url);
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  };
-
-  const debouncedFetch = useCallback(
-    debounce((value) => fetchLocations("/api/parking_locations/", value), 400),
-    []
-  );
-
-  useEffect(() => {
-    debouncedFetch(search);
-  }, [search]);
-
   const handleCreate = () => {
-    createParkingLocation(createForm)
-      .then(() => {
-        toast.success("Created!");
-        fetchLocations(currentUrl, search);
-        setCreating(false);
-      })
-      .catch(() => toast.error("Create failed."));
+    create(createForm, () => {
+      setCreating(false);
+    });
   };
 
   const handleEdit = () => {
-    updateParkingLocation(editing.id, editForm)
-      .then(() => {
-        toast.success("Updated!");
-        fetchLocations(currentUrl, search);
-        setEditing(null);
-      })
-      .catch(() => toast.error("Update failed."));
+    if (!editing) return;
+    update(editing.id, editForm, () => {
+      setEditing(null);
+    });
   };
 
   const handleDelete = () => {
-    deleteParkingLocation(confirmDelete.id)
-      .then(() => {
-        toast.success("Deleted!");
-        fetchLocations(currentUrl, search);
-        setConfirmDelete(null);
-      })
-      .catch(() => toast.error("Delete failed."));
+    if (!confirmDelete) return;
+    remove(confirmDelete.id, () => {
+      setConfirmDelete(null);
+    });
   };
 
   return (
