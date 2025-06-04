@@ -29,32 +29,34 @@ function UserProfile() {
 
   return (
     <UserLayout>
-      <div className="p-4 flex flex-col">
-        <div className="flex items-center justify-between mb-6">
+      <div className="p-4 flex flex-col max-w-2xl mx-auto w-full">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <h2 className="text-xl font-bold">My Profile</h2>
           {!isEditing && (
             <button
               onClick={startEditing}
-              className="px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark"
+              className="w-full sm:w-auto px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark"
             >
               Edit
             </button>
           )}
         </div>
 
-        {isEditing ? (
-          <UserProfileForm
-            editedProfile={editedProfile}
-            password={password}
-            saving={saving}
-            handleChange={handleChange}
-            setPassword={setPassword}
-            handleSubmit={handleSubmit}
-            cancelEditing={cancelEditing}
-          />
-        ) : (
-          <UserProfileDisplay profile={profile} />
-        )}
+        <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+          {isEditing ? (
+            <UserProfileForm
+              editedProfile={editedProfile}
+              password={password}
+              saving={saving}
+              handleChange={handleChange}
+              setPassword={setPassword}
+              handleSubmit={handleSubmit}
+              cancelEditing={cancelEditing}
+            />
+          ) : (
+            <UserProfileDisplay profile={profile} />
+          )}
+        </div>
 
         <ToastContainer />
       </div>

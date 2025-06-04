@@ -33,16 +33,18 @@ function UserReservations() {
 
   return (
     <UserLayout>
-      <div className="p-4 flex flex-col">
+      <div className="p-4 flex flex-col h-full">
         {/* Header & Controls */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-          <h2 className="text-xl font-bold mb-4">My Reservations</h2>
-          <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full sm:w-auto">
+          <h2 className="text-xl font-bold">My Reservations</h2>
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             <SearchInput
+              className="w-full sm:w-auto"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
             <ReservationStatusFilter
+              className="w-full sm:w-48"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
             />
@@ -53,7 +55,9 @@ function UserReservations() {
         {loading ? (
           <LoadingScreen />
         ) : reservations.length === 0 ? (
-          <p>No reservations found.</p>
+          <div className="flex items-center justify-center flex-grow">
+            <p className="text-gray-500">No reservations found.</p>
+          </div>
         ) : (
           <div className="flex flex-col flex-grow space-y-2 overflow-auto">
             {reservations.map((resv) => (
@@ -76,24 +80,20 @@ function UserReservations() {
         )}
 
         {/* Cancel Confirmation Modal */}
-        {confirmCancel && (
-          <ConfirmActionModal
-            isOpen={!!confirmCancel}
-            onClose={() => setConfirmCancel(null)}
-            onConfirm={handleCancel}
-            title="Confirm Cancellation"
-            message={
-              confirmCancel
-                ? `Are you sure you want to cancel the reservation at ${
-                    confirmCancel.parking_location_name
-                  } for user ${
-                    confirmCancel.user_username
-                  } starting at ${formatDateTime(confirmCancel.start_time)}?`
-                : ""
-            }
-            confirmText="Confirm Cancel"
-          />
-        )}
+        <ConfirmActionModal
+          isOpen={!!confirmCancel}
+          onClose={() => setConfirmCancel(null)}
+          onConfirm={handleCancel}
+          title="Confirm Cancellation"
+          message={
+            confirmCancel
+              ? `Are you sure you want to cancel your reservation at ${
+                  confirmCancel.parking_location_name
+                } starting at ${formatDateTime(confirmCancel.start_time)}?`
+              : ""
+          }
+          confirmText="Confirm Cancel"
+        />
 
         <ToastContainer />
       </div>
