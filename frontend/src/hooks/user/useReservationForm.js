@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { makeReservation } from "../../services/user/parkingLocationService";
 import { validateReservationTimes } from "../../utils/validation";
 
-export function useReservation() {
+export function useReservationForm() {
   const [reservingLocation, setReservingLocation] = useState(null);
 
   const handleReservationSubmit = (form) => {

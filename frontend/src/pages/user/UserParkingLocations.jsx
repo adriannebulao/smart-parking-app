@@ -1,4 +1,3 @@
-import { useState } from "react";
 import UserLayout from "../../layouts/UserLayout";
 import { CalendarCheck } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
@@ -8,7 +7,8 @@ import SearchInput from "../../components/SearchInput";
 import PaginationControls from "../../components/PaginationControls";
 
 import { useParkingLocations } from "../../hooks/user/useParkingLocations";
-import { useReservation } from "../../hooks/user/useReservation";
+import { useReservationForm } from "../../hooks/user/useReservationForm";
+import LoadingScreen from "../../components/LoadingScreen";
 
 function UserParkingLocations() {
   const {
@@ -23,7 +23,7 @@ function UserParkingLocations() {
   } = useParkingLocations();
 
   const { reservingLocation, setReservingLocation, handleReservationSubmit } =
-    useReservation();
+    useReservationForm();
 
   return (
     <UserLayout>
@@ -40,7 +40,7 @@ function UserParkingLocations() {
         </div>
 
         {loading ? (
-          <p>Loading...</p>
+          <LoadingScreen />
         ) : (
           <div className="flex flex-col flex-grow space-y-2 overflow-auto">
             {locations.map((loc) => (

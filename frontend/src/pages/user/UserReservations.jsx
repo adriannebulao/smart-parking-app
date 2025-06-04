@@ -1,4 +1,5 @@
-import AdminLayout from "../../layouts/AdminLayout";
+import { useState } from "react";
+import UserLayout from "../../layouts/UserLayout";
 import ConfirmActionModal from "../../components/ConfirmActionModal";
 import ReservationCard from "../../components/ReservationCard";
 import { formatDateTime } from "../../utils/reservationUtils";
@@ -6,9 +7,10 @@ import { ToastContainer } from "react-toastify";
 import SearchInput from "../../components/SearchInput";
 import PaginationControls from "../../components/PaginationControls";
 import ReservationStatusFilter from "../../components/ReservationStatusFilter";
-import { useReservations } from "../../hooks/admin/useReservations";
+import { useReservations } from "../../hooks/useReservations";
+import LoadingScreen from "../../components/LoadingScreen";
 
-function AdminReservations() {
+function UserReservations() {
   const {
     reservations,
     loading,
@@ -30,11 +32,11 @@ function AdminReservations() {
   };
 
   return (
-    <AdminLayout>
+    <UserLayout>
       <div className="p-4 h-screen flex flex-col">
         {/* Header & Controls */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-          <h2 className="text-xl font-bold mb-4">Reservations</h2>
+          <h2 className="text-xl font-bold mb-4">My Reservations</h2>
           <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full sm:w-auto">
             <SearchInput
               value={search}
@@ -49,7 +51,7 @@ function AdminReservations() {
 
         {/* Main Content */}
         {loading ? (
-          <p>Loading...</p>
+          <LoadingScreen />
         ) : reservations.length === 0 ? (
           <p>No reservations found.</p>
         ) : (
@@ -59,6 +61,7 @@ function AdminReservations() {
                 key={resv.id}
                 resv={resv}
                 onCancel={setConfirmCancel}
+                showUser={false}
               />
             ))}
 
@@ -94,8 +97,8 @@ function AdminReservations() {
 
         <ToastContainer />
       </div>
-    </AdminLayout>
+    </UserLayout>
   );
 }
 
-export default AdminReservations;
+export default UserReservations;

@@ -4,9 +4,10 @@ import SearchInput from "../../components/SearchInput";
 import ReservationStatusFilter from "../../components/ReservationStatusFilter";
 import PaginationControls from "../../components/PaginationControls";
 import ConfirmActionModal from "../../components/ConfirmActionModal";
+import LoadingScreen from "../../components/LoadingScreen";
 import { ToastContainer } from "react-toastify";
 import { formatDateTime } from "../../utils/reservationUtils";
-import { useReservations } from "../../hooks/admin/useReservations";
+import { useReservations } from "../../hooks/useReservations";
 
 function AdminReservations() {
   const {
@@ -44,7 +45,7 @@ function AdminReservations() {
 
         {/* Main Content */}
         {loading ? (
-          <p>Loading...</p>
+          <LoadingScreen />
         ) : reservations.length === 0 ? (
           <p>No reservations found.</p>
         ) : (
@@ -53,7 +54,8 @@ function AdminReservations() {
               <ReservationCard
                 key={resv.id}
                 resv={resv}
-                onCancel={() => setConfirmCancel(resv)}
+                onCancel={setConfirmCancel}
+                showUser={true}
               />
             ))}
 

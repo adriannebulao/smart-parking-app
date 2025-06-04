@@ -2,6 +2,7 @@ import { Navigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import { useEffect, useState } from "react";
+import LoadingScreen from "./LoadingScreen";
 
 function ProtectedRoute({ children, allowedRoles = [] }) {
   const [isAuthorized, setIsAuthorized] = useState(null);
@@ -39,11 +40,7 @@ function ProtectedRoute({ children, allowedRoles = [] }) {
   }, [allowedRoles]);
 
   if (isAuthorized === null) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-background">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (isAuthorized) {

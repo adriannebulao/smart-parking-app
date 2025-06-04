@@ -7,6 +7,7 @@ import { ToastContainer } from "react-toastify";
 import SearchInput from "../../components/SearchInput";
 import PaginationControls from "../../components/PaginationControls";
 import UserStatusFilter from "../../components/admin/UserStatusFilter";
+import LoadingScreen from "../../components/LoadingScreen";
 
 import { useUserManagement } from "../../hooks/admin/useUserManagement";
 
@@ -53,7 +54,7 @@ function AdminUserManagement() {
 
         {/* Content */}
         {loading ? (
-          <p>Loading...</p>
+          <LoadingScreen />
         ) : users.length === 0 ? (
           <p>No users found.</p>
         ) : (

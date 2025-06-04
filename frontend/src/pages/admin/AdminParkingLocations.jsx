@@ -8,6 +8,7 @@ import ParkingLocationCard from "../../components/admin/ParkingLocationCard";
 import ParkingLocationModal from "../../components/admin/ParkingLocationModal";
 import ConfirmActionModal from "../../components/ConfirmActionModal";
 import PaginationControls from "../../components/PaginationControls";
+import LoadingScreen from "../../components/LoadingScreen";
 
 import { useParkingLocations } from "../../hooks/admin/useParkingLocations";
 
@@ -73,7 +74,7 @@ function AdminParkingLocations() {
         </div>
 
         {loading ? (
-          <p>Loading...</p>
+          <LoadingScreen />
         ) : (
           <div className="flex flex-col flex-grow space-y-2 overflow-auto">
             {locations.map((loc) => (

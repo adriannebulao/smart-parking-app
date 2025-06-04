@@ -1,4 +1,3 @@
-// components/UserCard.js
 import { XCircle } from "lucide-react";
 
 function UserCard({ user, onDeactivate }) {

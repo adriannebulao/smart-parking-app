@@ -3,9 +3,9 @@ import { toast } from "react-toastify";
 import {
   getReservations,
   cancelReservation,
-} from "../../services/admin/reservationService";
-import { buildReservationUrl } from "../../utils/urlBuilder";
-import { sortReservations, getStatus } from "../../utils/reservationUtils";
+} from "../services/reservationService";
+import { buildReservationUrl } from "../utils/urlBuilder";
+import { sortReservations, getStatus } from "../utils/reservationUtils";
 
 export function useReservations() {
   const [reservations, setReservations] = useState([]);

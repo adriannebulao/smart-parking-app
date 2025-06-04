@@ -1,7 +1,7 @@
 import { XCircle } from "lucide-react";
 import { getStatus, formatDateTime } from "../utils/reservationUtils";
 
-function ReservationCard({ resv, onCancel }) {
+function ReservationCard({ resv, onCancel, showUser = true }) {
   const status = getStatus(resv);
 
   const statusStyles = {
@@ -23,9 +23,11 @@ function ReservationCard({ resv, onCancel }) {
         <p className="text-sm text-gray-600">
           End: {formatDateTime(resv.end_time)}
         </p>
-        <p className="text-sm text-gray-700 font-medium">
-          User: {resv.user_username}
-        </p>
+        {showUser && (
+          <p className="text-sm text-gray-700 font-medium">
+            User: {resv.user_username}
+          </p>
+        )}
       </div>
 
       <div className="flex items-center gap-6 flex-shrink-0">
