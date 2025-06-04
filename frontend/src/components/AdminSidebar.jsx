@@ -1,8 +1,8 @@
-import { Home, MapPin, CalendarCheck, Users } from "lucide-react";
+import { ChartColumn, MapPin, CalendarCheck, Users } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 
 const navItems = [
-  { name: "Home", icon: Home, path: "/admin" },
+  { name: "Summary", icon: ChartColumn, path: "/admin" },
   { name: "Parking Locations", icon: MapPin, path: "/admin/parking-locations" },
   { name: "Reservations", icon: CalendarCheck, path: "/admin/reservations" },
   {

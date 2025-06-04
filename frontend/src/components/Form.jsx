@@ -9,7 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 function Form({ route, method, userType = "user" }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState(""); // 👈 new state
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [loading, setLoading] = useState(false);

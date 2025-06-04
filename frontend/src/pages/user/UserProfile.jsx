@@ -88,7 +88,6 @@ function UserProfile() {
       setPassword("");
       toast.success("Profile updated successfully");
 
-      // If username or password changed, show a warning toast then log out
       if (usernameChanged || passwordChanged) {
         toast.info("You will be logged out due to username/password change", {
           autoClose: 2000,
@@ -187,7 +186,6 @@ function UserProfile() {
                 value={password}
                 onChange={handlePasswordChange}
                 className="w-full border rounded px-3 py-2"
-                placeholder="••••••••"
               />
             </div>
 
