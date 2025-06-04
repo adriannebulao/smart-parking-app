@@ -1,4 +1,4 @@
-import react, { useState } from "react";
+import react, { useState, useRef } from "react";
 import AdminLayout from "../../layouts/AdminLayout";
 import { Plus } from "lucide-react";
 import { ToastContainer } from "react-toastify";
@@ -31,6 +31,7 @@ function AdminParkingLocations() {
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
+  const mainContentRef = useRef(null);
 
   const handleCreate = () => {
     create(createForm, () => {
@@ -54,7 +55,7 @@ function AdminParkingLocations() {
 
   return (
     <AdminLayout>
-      <div className="p-4 flex flex-col">
+      <div ref={mainContentRef} className="p-4 flex flex-col">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
           <h1 className="text-xl font-bold">Parking Locations</h1>
 
@@ -93,8 +94,14 @@ function AdminParkingLocations() {
             ))
           )}
           <PaginationControls
-            onPrev={() => fetchLocations(prevUrl, search)}
-            onNext={() => fetchLocations(nextUrl, search)}
+            onPrev={() => {
+              fetchLocations(prevUrl);
+              mainContentRef.current?.scrollIntoView({ behavior: "smooth" });
+            }}
+            onNext={() => {
+              fetchLocations(nextUrl);
+              mainContentRef.current?.scrollIntoView({ behavior: "smooth" });
+            }}
             hasPrev={!!prevUrl}
             hasNext={!!nextUrl}
             loading={loading}

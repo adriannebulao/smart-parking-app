@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import UserLayout from "../../layouts/UserLayout";
 import ConfirmActionModal from "../../components/ConfirmActionModal";
 import ReservationCard from "../../components/ReservationCard";
@@ -25,6 +25,7 @@ function UserReservations() {
   } = useReservations();
 
   const [confirmCancel, setConfirmCancel] = useState(null);
+  const mainContentRef = useRef(null);
 
   const handleCancel = async () => {
     if (!confirmCancel) return;
@@ -37,7 +38,7 @@ function UserReservations() {
 
   return (
     <UserLayout>
-      <div className="p-4 flex flex-col h-full">
+      <div ref={mainContentRef} className="p-4 flex flex-col h-full">
         {/* Header & Controls */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <h2 className="text-xl font-bold">My Reservations</h2>
@@ -74,8 +75,14 @@ function UserReservations() {
             ))}
 
             <PaginationControls
-              onPrev={() => fetchReservations(prevUrl)}
-              onNext={() => fetchReservations(nextUrl)}
+              onPrev={() => {
+                fetchReservations(prevUrl);
+                mainContentRef.current?.scrollIntoView({ behavior: "smooth" });
+              }}
+              onNext={() => {
+                fetchReservations(nextUrl);
+                mainContentRef.current?.scrollIntoView({ behavior: "smooth" });
+              }}
               hasPrev={!!prevUrl}
               hasNext={!!nextUrl}
               loading={loading}

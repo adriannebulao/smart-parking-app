@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import UserLayout from "../../layouts/UserLayout";
 import { CalendarCheck } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
@@ -25,9 +26,11 @@ function UserParkingLocations() {
   const { reservingLocation, setReservingLocation, handleReservationSubmit } =
     useReservationForm();
 
+  const mainContentRef = useRef(null);
+
   return (
     <UserLayout>
-      <div className="p-4 flex flex-col">
+      <div ref={mainContentRef} className="p-4 flex flex-col">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
           <h1 className="text-xl font-bold">Parking Locations</h1>
           <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
@@ -67,8 +70,14 @@ function UserParkingLocations() {
             ))
           )}
           <PaginationControls
-            onPrev={goPrev}
-            onNext={goNext}
+            onPrev={() => {
+              goPrev;
+              mainContentRef.current?.scrollIntoView({ behavior: "smooth" });
+            }}
+            onNext={() => {
+              goNext;
+              mainContentRef.current?.scrollIntoView({ behavior: "smooth" });
+            }}
             hasPrev={!!prevUrl}
             hasNext={!!nextUrl}
             loading={loading}
