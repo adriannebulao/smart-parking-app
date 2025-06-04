@@ -5,7 +5,7 @@ import {
   fetchGroupedSummary,
   fetchTodaySummary,
   fetchTotalSummary,
-} from "../../services/reservationSummaryService";
+} from "../../services/admin/reservationSummaryService";
 import { formatDate, formatPeriodLabel, getDaysDiff } from "../../utils/format";
 import { buildChartOptions } from "../../utils/chart";
 import SummaryCard from "../../components/admin/SummaryCard";

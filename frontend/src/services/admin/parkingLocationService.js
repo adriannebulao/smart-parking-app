@@ -1,4 +1,4 @@
-import api from "./api";
+import api from "../api";
 
 export const getParkingLocations = (url, search = "") => {
   let fullUrl = url;

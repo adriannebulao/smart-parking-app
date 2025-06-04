@@ -9,7 +9,7 @@ import { buildUserManagementUrl } from "../../utils/urlBuilder";
 import {
   getUsers,
   deactivateUser,
-} from "../../services/adminUserManagementService";
+} from "../../services/admin/userManagementService";
 
 function AdminUserManagement() {
   const [users, setUsers] = useState([]);

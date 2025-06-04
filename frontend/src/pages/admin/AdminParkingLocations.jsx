@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import react, { useEffect, useState, useCallback } from "react";
 import AdminLayout from "../../layouts/AdminLayout";
 import { Plus } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
@@ -15,7 +15,7 @@ import {
   createParkingLocation,
   updateParkingLocation,
   deleteParkingLocation,
-} from "../../services/adminParkingLocationService";
+} from "../../services/admin/parkingLocationService";
 
 function AdminParkingLocations() {
   const [locations, setLocations] = useState([]);
