@@ -53,7 +53,7 @@ export default function UserProfileForm({
           <input
             type="password"
             name="password"
-            value={editedProfile.new_password || ""}
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="w-full p-2 border rounded focus:ring-2 focus:ring-primary focus:border-transparent"
           />
