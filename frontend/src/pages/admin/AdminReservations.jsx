@@ -30,13 +30,15 @@ function AdminReservations() {
       <div className="p-4 flex flex-col">
         {/* Header & Controls */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-          <h2 className="text-xl font-bold mb-4">Reservations</h2>
-          <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full sm:w-auto">
+          <h2 className="text-xl font-bold">Reservations</h2>
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             <SearchInput
+              className="w-full sm:w-auto"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
             <ReservationStatusFilter
+              className="w-full sm:w-48"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
             />

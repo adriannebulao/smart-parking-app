@@ -1,17 +1,15 @@
 import { Search } from "lucide-react";
 
-function SearchInput({ value, onChange }) {
+function SearchInput({ value, onChange, className = "" }) {
   return (
-    <div className="relative flex items-center w-full sm:max-w-xs">
-      <Search className="absolute left-3 text-gray-400" size={16} />
-      <input
-        type="text"
-        placeholder="Search by name..."
-        value={value}
-        onChange={onChange}
-        className="pl-8 pr-3 py-2 border rounded w-full"
-      />
-    </div>
+    <input
+      type="search"
+      value={value}
+      onChange={onChange}
+      className={`border px-3 py-2 rounded-md ${className}`}
+      placeholder="Search..."
+      aria-label="Search"
+    />
   );
 }
 
