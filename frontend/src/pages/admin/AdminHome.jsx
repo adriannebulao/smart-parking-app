@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import react, { useEffect, useState } from "react";
 import ApexCharts from "react-apexcharts";
 import AdminLayout from "../../layouts/AdminLayout";
 import {
@@ -6,6 +6,10 @@ import {
   fetchTodaySummary,
   fetchTotalSummary,
 } from "../../services/reservationSummaryService";
+import { formatDate, formatPeriodLabel, getDaysDiff } from "../../utils/format";
+import { buildChartOptions } from "../../utils/chart";
+import SummaryCard from "../../components/admin/SummaryCard";
+import TotalRangeSummaryCard from "../../components/admin/TotalRangeSummaryCard";
 
 const RANGE_OPTIONS = ["week", "month", "year"];
 const GROUP_BY_OPTIONS = ["day", "week", "month", "year"];
@@ -13,20 +17,12 @@ const GROUP_BY_OPTIONS = ["day", "week", "month", "year"];
 function AdminHome() {
   const [todaySummary, setTodaySummary] = useState(null);
   const [totalSummary, setTotalSummary] = useState(null);
-
   const [totalRange, setTotalRange] = useState("week");
   const [groupedRange, setGroupedRange] = useState("week");
   const [groupBy, setGroupBy] = useState("day");
-
   const [chartData, setChartData] = useState({
-    options: {
-      chart: { id: "reservations-bar" },
-      plotOptions: { bar: { horizontal: true } },
-      yaxis: { categories: [], title: { text: "Period" } },
-      xaxis: { title: { text: "Total Reservations" } },
-      colors: ["#2f27ce"],
-    },
-    series: [{ name: "Total Reservations", data: [] }],
+    options: {},
+    series: [],
   });
 
   const validGroupByOptions = () => {
@@ -42,37 +38,6 @@ function AdminHome() {
     }
   }, [groupedRange]);
 
-  function formatPeriodLabel(period) {
-    if (!period) return "";
-
-    if (groupBy === "day") {
-      const date = new Date(period);
-      return new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      }).format(date);
-    }
-
-    if (groupBy === "week") {
-      const [year, weekStr] = period.split("-W");
-      if (!year || !weekStr) return period;
-      return `Week ${parseInt(weekStr, 10)}, ${year}`;
-    }
-
-    if (groupBy === "month") {
-      const [year, month] = period.split("-");
-      if (!year || !month) return period;
-      const date = new Date(Number(year), Number(month) - 1);
-      return new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "short",
-      }).format(date);
-    }
-
-    return period;
-  }
-
   useEffect(() => {
     const loadSummaries = async () => {
       try {
@@ -86,22 +51,12 @@ function AdminHome() {
         setTotalSummary(total);
 
         const categories = grouped.data.map((item) =>
-          formatPeriodLabel(item.period)
+          formatPeriodLabel(item.period, groupBy)
         );
         const seriesData = grouped.data.map((item) => item.total_reservations);
 
         setChartData({
-          options: {
-            chart: { id: "reservations-bar" },
-            plotOptions: { bar: { horizontal: false } },
-            xaxis: {
-              categories,
-              title: { text: "Period" },
-            },
-            yaxis: {
-              title: { text: "Total Reservations" },
-            },
-          },
+          options: buildChartOptions(categories),
           series: [{ name: "Total Reservations", data: seriesData }],
         });
       } catch (error) {
@@ -112,96 +67,28 @@ function AdminHome() {
     loadSummaries();
   }, [groupBy, groupedRange, totalRange]);
 
-  function formatDate(dateString) {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    }).format(date);
-  }
-
-  function getDaysDiff(startDateStr, endDateStr) {
-    const start = new Date(startDateStr);
-    const end = new Date(endDateStr);
-    const diffTime = end - start;
-    return Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
-  }
-
   return (
     <AdminLayout>
       <h1 className="text-2xl font-bold mb-6">Summary Reports</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div className="bg-white p-4 rounded shadow flex flex-col justify-between">
-          <h2 className="text-lg font-semibold mb-2">
-            Total Reservations Today
-          </h2>
-          {todaySummary ? (
-            <>
-              <p className="text-sm text-gray-500 mb-1">
-                {formatDate(todaySummary.date)}
-              </p>
-              <p className="text-3xl font-bold text-primary">
-                {todaySummary.total_reservations}
-              </p>
-            </>
-          ) : (
-            <p>Loading…</p>
-          )}
-        </div>
+        <SummaryCard
+          title="Total Reservations Today"
+          date={todaySummary ? formatDate(todaySummary.date) : ""}
+          total={todaySummary?.total_reservations}
+        />
 
-        <div className="bg-white p-4 rounded shadow flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold flex items-center gap-2">
-                Total Reservations in the Past
-                <select
-                  value={totalRange}
-                  onChange={(e) => setTotalRange(e.target.value)}
-                  className="border rounded p-1 text-sm"
-                >
-                  {RANGE_OPTIONS.map((opt) => (
-                    <option key={opt} value={opt}>
-                      {opt.charAt(0).toUpperCase() + opt.slice(1)}
-                    </option>
-                  ))}
-                </select>
-              </h2>
-            </div>
-
-            {totalSummary ? (
-              <>
-                <p className="text-sm text-gray-500 mb-2">
-                  {formatDate(totalSummary.start_date)} →{" "}
-                  {formatDate(totalSummary.end_date)}
-                </p>
-                <p className="text-3xl font-bold text-primary mb-1">
-                  {totalSummary.total_reservations}
-                </p>
-                <p className="text-sm text-gray-600">
-                  Average reservations per day this {totalRange}:{" "}
-                  <span className="font-semibold text-primary">
-                    {(
-                      totalSummary.total_reservations /
-                      getDaysDiff(
-                        totalSummary.start_date,
-                        totalSummary.end_date
-                      )
-                    ).toFixed(2)}
-                  </span>
-                </p>
-              </>
-            ) : (
-              <p>Loading…</p>
-            )}
-          </div>
-        </div>
+        <TotalRangeSummaryCard
+          range={totalRange}
+          onRangeChange={setTotalRange}
+          summary={totalSummary}
+          formatDate={formatDate}
+          getDaysDiff={getDaysDiff}
+        />
       </div>
 
       <div className="bg-white p-4 rounded shadow">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <h2 className="text-lg font-semibold flex items-center gap-2 flex-wrap">
             Total Reservations in the Past
             <select
@@ -232,7 +119,6 @@ function AdminHome() {
               ))}
             </select>
           </h2>
-          <div className="flex gap-4"></div>
         </div>
 
         <ApexCharts
