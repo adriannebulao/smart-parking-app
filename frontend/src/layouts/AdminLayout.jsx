@@ -1,4 +1,4 @@
-import AdminSidebar from "../components/AdminSidebar";
+import AdminSidebar from "../components/admin/AdminSidebar";
 import TopBar from "../components/TopBar";
 import { jwtDecode } from "jwt-decode";
 import { ACCESS_TOKEN } from "../constants";
