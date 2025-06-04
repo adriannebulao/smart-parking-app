@@ -26,9 +26,13 @@ function UserReservations() {
 
   const [confirmCancel, setConfirmCancel] = useState(null);
 
-  const handleCancel = () => {
+  const handleCancel = async () => {
     if (!confirmCancel) return;
-    cancel(confirmCancel, () => setConfirmCancel(null));
+    try {
+      await cancel(confirmCancel);
+    } finally {
+      setConfirmCancel(null);
+    }
   };
 
   return (
