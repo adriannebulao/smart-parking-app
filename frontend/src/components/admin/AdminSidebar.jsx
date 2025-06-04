@@ -32,11 +32,14 @@ export default function AdminSidebar({ isOpen, onClose }) {
   return (
     <div
       className={`
-        fixed md:static top-0 left-0 h-full bg-background z-20 shadow-md border-r border-gray-200
+        fixed md:static top-0 left-0 h-full bg-background shadow-md border-r border-gray-200
         transform transition-all duration-300 ease-in-out flex flex-col
         ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0
         ${shouldCollapse ? "w-16" : "w-60"}
       `}
+      style={{
+        zIndex: isMobile ? 50 : 0,
+      }}
     >
       <div className="flex-1 mt-4 space-y-2">
         {navItems.map(({ name, icon: Icon, path }) => (
