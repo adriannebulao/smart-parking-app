@@ -1,4 +1,4 @@
-import UserSidebar from "../components/UserSidebar";
+import UserSidebar from "../components/user/UserSidebar";
 import TopBar from "../components/TopBar";
 import { jwtDecode } from "jwt-decode";
 import { ACCESS_TOKEN } from "../constants";
