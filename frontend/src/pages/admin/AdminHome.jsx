@@ -40,38 +40,42 @@ function AdminHome() {
       </div>
 
       <div className="bg-white p-4 rounded shadow">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
-          <h2 className="text-lg font-semibold">
-            Total Reservations in the Past
-          </h2>
-          <div className="flex gap-2 flex-wrap">
-            <select
-              value={groupedRange}
-              onChange={(e) => setGroupedRange(e.target.value)}
-              className="border rounded p-1 text-sm"
-            >
-              {["week", "month", "year"].map((opt) => (
-                <option key={opt} value={opt}>
-                  {opt.charAt(0).toUpperCase() + opt.slice(1)}
-                </option>
-              ))}
-            </select>
-            by
-            <select
-              value={groupBy}
-              onChange={(e) => setGroupBy(e.target.value)}
-              className="border rounded p-1 text-sm"
-            >
-              {["day", "week", "month", "year"].map((opt) => (
-                <option
-                  key={opt}
-                  value={opt}
-                  disabled={!getValidGroupByOptions(groupedRange).includes(opt)}
-                >
-                  {opt.charAt(0).toUpperCase() + opt.slice(1)}
-                </option>
-              ))}
-            </select>
+        <div className="mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+            <h2 className="text-lg font-semibold whitespace-nowrap">
+              Total Reservations in the Past
+            </h2>
+            <div className="flex items-center gap-2 font-semibold">
+              <select
+                value={groupedRange}
+                onChange={(e) => setGroupedRange(e.target.value)}
+                className="border rounded p-1 text-sm"
+              >
+                {["week", "month", "year"].map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt.charAt(0).toUpperCase() + opt.slice(1)}
+                  </option>
+                ))}
+              </select>
+              <span className="text-sm">by</span>
+              <select
+                value={groupBy}
+                onChange={(e) => setGroupBy(e.target.value)}
+                className="border rounded p-1 text-sm"
+              >
+                {["day", "week", "month", "year"].map((opt) => (
+                  <option
+                    key={opt}
+                    value={opt}
+                    disabled={
+                      !getValidGroupByOptions(groupedRange).includes(opt)
+                    }
+                  >
+                    {opt.charAt(0).toUpperCase() + opt.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
 
