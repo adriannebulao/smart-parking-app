@@ -133,10 +133,11 @@ function AdminHome() {
     <AdminLayout>
       <h1 className="text-2xl font-bold mb-6">Summary Reports</h1>
 
-      {/* Equal width cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div className="bg-white p-4 rounded shadow flex flex-col justify-between">
-          <h2 className="text-lg font-semibold mb-2">Today</h2>
+          <h2 className="text-lg font-semibold mb-2">
+            Total Reservations Today
+          </h2>
           {todaySummary ? (
             <>
               <p className="text-sm text-gray-500 mb-1">
@@ -154,21 +155,20 @@ function AdminHome() {
         <div className="bg-white p-4 rounded shadow flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold">
-                Total This{" "}
-                {totalRange.charAt(0).toUpperCase() + totalRange.slice(1)}
+              <h2 className="text-lg font-semibold flex items-center gap-2">
+                Total Reservations in the Past
+                <select
+                  value={totalRange}
+                  onChange={(e) => setTotalRange(e.target.value)}
+                  className="border rounded p-1 text-sm"
+                >
+                  {RANGE_OPTIONS.map((opt) => (
+                    <option key={opt} value={opt}>
+                      {opt.charAt(0).toUpperCase() + opt.slice(1)}
+                    </option>
+                  ))}
+                </select>
               </h2>
-              <select
-                value={totalRange}
-                onChange={(e) => setTotalRange(e.target.value)}
-                className="border rounded p-1"
-              >
-                {RANGE_OPTIONS.map((opt) => (
-                  <option key={opt} value={opt}>
-                    {opt.charAt(0).toUpperCase() + opt.slice(1)}
-                  </option>
-                ))}
-              </select>
             </div>
 
             {totalSummary ? (
@@ -202,14 +202,12 @@ function AdminHome() {
 
       <div className="bg-white p-4 rounded shadow">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">
-            Reservation Summary ({groupBy}s in past {groupedRange})
-          </h2>
-          <div className="flex gap-4">
+          <h2 className="text-lg font-semibold flex items-center gap-2 flex-wrap">
+            Total Reservations in the Past
             <select
               value={groupedRange}
               onChange={(e) => setGroupedRange(e.target.value)}
-              className="border rounded p-1"
+              className="border rounded p-1 text-sm"
             >
               {RANGE_OPTIONS.map((opt) => (
                 <option key={opt} value={opt}>
@@ -217,11 +215,11 @@ function AdminHome() {
                 </option>
               ))}
             </select>
-
+            by
             <select
               value={groupBy}
               onChange={(e) => setGroupBy(e.target.value)}
-              className="border rounded p-1"
+              className="border rounded p-1 text-sm"
             >
               {GROUP_BY_OPTIONS.map((opt) => (
                 <option
@@ -233,7 +231,8 @@ function AdminHome() {
                 </option>
               ))}
             </select>
-          </div>
+          </h2>
+          <div className="flex gap-4"></div>
         </div>
 
         <ApexCharts
