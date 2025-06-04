@@ -13,7 +13,7 @@ function NotFound() {
           The page you're looking for doesn't exist!
         </p>
         <a
-          href="/"
+          href="/user/parking-locations"
           className="inline-block bg-primary text-white py-3 px-6 rounded-md font-semibold hover:bg-accent transition"
         >
           Go Home

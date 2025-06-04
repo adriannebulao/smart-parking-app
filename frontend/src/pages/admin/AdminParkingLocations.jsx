@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import api from "../../api";
+import api from "../../services/api";
 import AdminLayout from "../../layouts/AdminLayout";
 import { Search, Pencil, Trash, Plus } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";

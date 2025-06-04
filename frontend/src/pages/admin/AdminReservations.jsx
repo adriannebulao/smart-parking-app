@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../../api";
+import api from "../../services/api";
 import AdminLayout from "../../layouts/AdminLayout";
 import { XCircle } from "lucide-react";
 import Modal from "../../components/Modal";

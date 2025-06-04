@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "./constants";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import { jwtDecode } from "jwt-decode";
 
 const api = axios.create({

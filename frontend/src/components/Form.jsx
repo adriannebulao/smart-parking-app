@@ -1,5 +1,5 @@
 import { useState } from "react";
-import api from "../api";
+import api from "../services/api";
 import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import { jwtDecode } from "jwt-decode";
@@ -57,7 +57,7 @@ function Form({ route, method, userType = "user" }) {
         }
 
         toast.success("Login successful!");
-        navigate(userType === "admin" ? "/admin" : "/");
+        navigate(userType === "admin" ? "/admin" : "/user/parking-locations");
       } else {
         toast.success("Account created successfully!");
         navigate("/login");

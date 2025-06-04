@@ -23,7 +23,9 @@ function ProtectedRoute({ children, allowedRoles = [] }) {
         setIsAuthorized(isAllowed);
 
         if (!isAllowed) {
-          setRedirectTo(decoded.role === "admin" ? "/admin" : "/");
+          setRedirectTo(
+            decoded.role === "admin" ? "/admin" : "/user/parking-locations"
+          );
         }
       } catch {
         localStorage.removeItem(ACCESS_TOKEN);

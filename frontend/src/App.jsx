@@ -4,7 +4,6 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import UserLogin from "./pages/user/UserLogin";
 import Register from "./pages/Register";
-import UserHome from "./pages/user/UserHome";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminLogin from "./pages/admin/AdminLogin";
@@ -26,14 +25,6 @@ function App() {
     <BrowserRouter>
       <ToastContainer position="top-right" autoClose={3000} />
       <Routes>
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute allowedRoles={["user"]} key={"user"}>
-              <UserHome />
-            </ProtectedRoute>
-          }
-        />
         <Route
           path="/user/parking-locations"
           element={
