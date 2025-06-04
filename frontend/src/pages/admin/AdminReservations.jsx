@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import api from "../../services/api";
+import {
+  getReservations,
+  cancelReservation,
+} from "../../services/admin/reservationService";
 import AdminLayout from "../../layouts/AdminLayout";
 import Modal from "../../components/Modal";
 import { toast, ToastContainer } from "react-toastify";
@@ -28,8 +31,7 @@ function AdminReservations() {
 
   const fetchReservations = (url) => {
     setLoading(true);
-    api
-      .get(url)
+    getReservations(url)
       .then((res) => {
         const sorted = sortReservations(
           res.data.results,
@@ -47,8 +49,7 @@ function AdminReservations() {
 
   const handleCancel = () => {
     if (!confirmCancel) return;
-    api
-      .post(`/api/reservations/${confirmCancel.id}/cancel/`)
+    cancelReservation(confirmCancel.id)
       .then(() => {
         toast.success("Reservation cancelled.");
         fetchReservations(currentUrl);
