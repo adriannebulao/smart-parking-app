@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import SearchInput from "../../components/SearchInput";
 import ParkingLocationCard from "../../components/admin/ParkingLocationCard";
 import ParkingLocationModal from "../../components/admin/ParkingLocationModal";
-import ConfirmDeleteModal from "../../components/admin/ConfirmDeleteModal";
+import ConfirmActionModal from "../../components/ConfirmActionModal";
 import PaginationControls from "../../components/PaginationControls";
 
 import {
@@ -157,11 +157,13 @@ function AdminParkingLocations() {
           isEdit={true}
         />
 
-        <ConfirmDeleteModal
+        <ConfirmActionModal
           isOpen={!!confirmDelete}
-          name={confirmDelete?.name}
           onClose={() => setConfirmDelete(null)}
-          onDelete={handleDelete}
+          onConfirm={handleDelete}
+          title="Confirm Delete"
+          message={`Are you sure you want to delete "${confirmDelete?.name}"?`}
+          confirmText="Delete"
         />
 
         <ToastContainer />

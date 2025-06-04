@@ -1,50 +1,55 @@
-import UserLayout from "../../layouts/UserLayout";
-import Modal from "../../components/Modal";
+import AdminLayout from "../../layouts/AdminLayout";
+import ConfirmActionModal from "../../components/ConfirmActionModal";
 import ReservationCard from "../../components/ReservationCard";
-import SearchInput from "../../components/SearchInput";
-import StatusFilter from "../../components/ReservationFilter";
-import PaginationControls from "../../components/PaginationControls";
-import LoadingScreen from "../../components/LoadingScreen";
-import useUserReservations from "../../hooks/user/useUserReservations";
 import { formatDateTime } from "../../utils/reservationUtils";
 import { ToastContainer } from "react-toastify";
+import SearchInput from "../../components/SearchInput";
+import PaginationControls from "../../components/PaginationControls";
+import ReservationStatusFilter from "../../components/ReservationStatusFilter";
+import { useReservations } from "../../hooks/admin/useReservations";
 
-function UserReservations() {
+function AdminReservations() {
   const {
     reservations,
     loading,
     nextUrl,
     prevUrl,
     statusFilter,
-    search,
-    confirmCancel,
-    setConfirmCancel,
     setStatusFilter,
+    search,
     setSearch,
     fetchReservations,
-    handleCancel,
-  } = useUserReservations();
+    cancel,
+  } = useReservations();
+
+  const [confirmCancel, setConfirmCancel] = useState(null);
+
+  const handleCancel = () => {
+    if (!confirmCancel) return;
+    cancel(confirmCancel, () => setConfirmCancel(null));
+  };
 
   return (
-    <UserLayout>
+    <AdminLayout>
       <div className="p-4 h-screen flex flex-col">
+        {/* Header & Controls */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-          <h2 className="text-xl font-bold mb-4">My Reservations</h2>
-
+          <h2 className="text-xl font-bold mb-4">Reservations</h2>
           <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full sm:w-auto">
             <SearchInput
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <StatusFilter
+            <ReservationStatusFilter
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
             />
           </div>
         </div>
 
+        {/* Main Content */}
         {loading ? (
-          <LoadingScreen />
+          <p>Loading...</p>
         ) : reservations.length === 0 ? (
           <p>No reservations found.</p>
         ) : (
@@ -67,41 +72,30 @@ function UserReservations() {
           </div>
         )}
 
+        {/* Cancel Confirmation Modal */}
         {confirmCancel && (
-          <Modal
+          <ConfirmActionModal
             isOpen={!!confirmCancel}
             onClose={() => setConfirmCancel(null)}
-            footer={
-              <>
-                <button
-                  onClick={() => setConfirmCancel(null)}
-                  className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleCancel}
-                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-                >
-                  Confirm Cancel
-                </button>
-              </>
+            onConfirm={handleCancel}
+            title="Confirm Cancellation"
+            message={
+              confirmCancel
+                ? `Are you sure you want to cancel the reservation at ${
+                    confirmCancel.parking_location_name
+                  } for user ${
+                    confirmCancel.user_username
+                  } starting at ${formatDateTime(confirmCancel.start_time)}?`
+                : ""
             }
-          >
-            <h2 className="text-lg font-bold mb-4">Confirm Cancellation</h2>
-            <p>
-              Are you sure you want to cancel the reservation at{" "}
-              <strong>{confirmCancel.parking_location_name}</strong> for user{" "}
-              <strong>{confirmCancel.user_username}</strong> starting at{" "}
-              <strong>{formatDateTime(confirmCancel.start_time)}</strong>?
-            </p>
-          </Modal>
+            confirmText="Confirm Cancel"
+          />
         )}
 
         <ToastContainer />
       </div>
-    </UserLayout>
+    </AdminLayout>
   );
 }
 
-export default UserReservations;
+export default AdminReservations;

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import AdminLayout from "../../layouts/AdminLayout";
-import ConfirmDeactivateModal from "../../components/admin/ConfirmDeactivateModal";
+import ConfirmActionModal from "../../components/ConfirmActionModal";
 import UserCard from "../../components/admin/UserCard";
 import { ToastContainer } from "react-toastify";
 
@@ -77,11 +77,17 @@ function AdminUserManagement() {
         )}
 
         {/* Modal */}
-        <ConfirmDeactivateModal
-          user={confirmDeactivate}
+        <ConfirmActionModal
           isOpen={!!confirmDeactivate}
           onClose={() => setConfirmDeactivate(null)}
           onConfirm={handleDeactivate}
+          title="Confirm Deactivation"
+          message={
+            confirmDeactivate
+              ? `Are you sure you want to deactivate user ${confirmDeactivate.username} (${confirmDeactivate.first_name} ${confirmDeactivate.last_name})?`
+              : ""
+          }
+          confirmText="Confirm Deactivate"
         />
 
         <ToastContainer />
