@@ -27,7 +27,7 @@ function UserParkingLocations() {
 
   return (
     <UserLayout>
-      <div className="p-4 h-screen flex flex-col">
+      <div className="p-4 flex flex-col h-full">
         <div className="flex justify-between items-center mb-4 flex-shrink-0 gap-4">
           <h1 className="text-xl font-bold whitespace-nowrap">
             Parking Locations

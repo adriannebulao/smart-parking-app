@@ -33,7 +33,7 @@ function UserReservations() {
 
   return (
     <UserLayout>
-      <div className="p-4 h-screen flex flex-col">
+      <div className="p-4 flex flex-col">
         {/* Header & Controls */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <h2 className="text-xl font-bold mb-4">My Reservations</h2>

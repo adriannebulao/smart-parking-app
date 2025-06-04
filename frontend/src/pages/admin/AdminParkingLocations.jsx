@@ -54,7 +54,7 @@ function AdminParkingLocations() {
 
   return (
     <AdminLayout>
-      <div className="p-4 h-screen flex flex-col">
+      <div className="p-4 flex flex-col">
         <div className="flex justify-between items-center mb-4 flex-wrap gap-4">
           <h1 className="text-xl font-bold">Parking Locations</h1>
           <SearchInput
