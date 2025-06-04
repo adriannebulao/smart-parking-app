@@ -48,13 +48,21 @@ function Form({ route, method, userType = "user" }) {
         const decoded = jwtDecode(accessToken);
 
         if (decoded.role !== userType) {
-          toast.error(
-            `Logged in user role (${decoded.role}) does not match expected (${userType})`
-          );
-          localStorage.clear();
+          if (userType === "admin") {
+            toast.error(
+              "This is a user account. Please use the user login page."
+            );
+          } else {
+            toast.error(
+              "This is an admin account. Please use the admin login page."
+            );
+          }
           setLoading(false);
           return;
         }
+
+        localStorage.setItem(ACCESS_TOKEN, accessToken);
+        localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
 
         toast.success("Login successful!");
         navigate(userType === "admin" ? "/admin" : "/user/parking-locations");
