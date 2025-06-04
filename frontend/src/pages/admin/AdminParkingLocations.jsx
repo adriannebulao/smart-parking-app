@@ -55,29 +55,32 @@ function AdminParkingLocations() {
   return (
     <AdminLayout>
       <div className="p-4 flex flex-col">
-        <div className="flex justify-between items-center mb-4 flex-wrap gap-4">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
           <h1 className="text-xl font-bold">Parking Locations</h1>
-          <SearchInput
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <button
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark"
-            onClick={() => {
-              setCreating(true);
-              setCreateForm({ name: "", slots: "" });
-            }}
-          >
-            <Plus size={16} />
-            New Parking Location
-          </button>
+
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <SearchInput
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <button
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark w-full sm:w-auto"
+              onClick={() => {
+                setCreating(true);
+                setCreateForm({ name: "", slots: "" });
+              }}
+            >
+              <Plus size={16} />
+              New Location
+            </button>
+          </div>
         </div>
 
-        {loading ? (
-          <LoadingScreen />
-        ) : (
-          <div className="flex flex-col flex-grow space-y-2 overflow-auto">
-            {locations.map((loc) => (
+        <div className="flex-grow overflow-auto space-y-2">
+          {loading ? (
+            <LoadingScreen />
+          ) : (
+            locations.map((loc) => (
               <ParkingLocationCard
                 key={loc.id}
                 loc={loc}
@@ -87,49 +90,48 @@ function AdminParkingLocations() {
                 }}
                 onDelete={() => setConfirmDelete(loc)}
               />
-            ))}
-
-            <PaginationControls
-              onPrev={() => fetchLocations(prevUrl, search)}
-              onNext={() => fetchLocations(nextUrl, search)}
-              hasPrev={!!prevUrl}
-              hasNext={!!nextUrl}
-              loading={loading}
-            />
-          </div>
-        )}
-
-        <ParkingLocationModal
-          isOpen={creating}
-          title="New Parking Location"
-          form={createForm}
-          onChange={setCreateForm}
-          onClose={() => setCreating(false)}
-          onSubmit={handleCreate}
-          isEdit={false}
-        />
-
-        <ParkingLocationModal
-          isOpen={!!editing}
-          title="Edit Parking Location"
-          form={editForm}
-          onChange={setEditForm}
-          onClose={() => setEditing(null)}
-          onSubmit={handleEdit}
-          isEdit={true}
-        />
-
-        <ConfirmActionModal
-          isOpen={!!confirmDelete}
-          onClose={() => setConfirmDelete(null)}
-          onConfirm={handleDelete}
-          title="Confirm Delete"
-          message={`Are you sure you want to delete "${confirmDelete?.name}"?`}
-          confirmText="Delete"
-        />
-
-        <ToastContainer />
+            ))
+          )}
+          <PaginationControls
+            onPrev={() => fetchLocations(prevUrl, search)}
+            onNext={() => fetchLocations(nextUrl, search)}
+            hasPrev={!!prevUrl}
+            hasNext={!!nextUrl}
+            loading={loading}
+          />
+        </div>
       </div>
+
+      <ParkingLocationModal
+        isOpen={creating}
+        title="New Parking Location"
+        form={createForm}
+        onChange={setCreateForm}
+        onClose={() => setCreating(false)}
+        onSubmit={handleCreate}
+        isEdit={false}
+      />
+
+      <ParkingLocationModal
+        isOpen={!!editing}
+        title="Edit Parking Location"
+        form={editForm}
+        onChange={setEditForm}
+        onClose={() => setEditing(null)}
+        onSubmit={handleEdit}
+        isEdit={true}
+      />
+
+      <ConfirmActionModal
+        isOpen={!!confirmDelete}
+        onClose={() => setConfirmDelete(null)}
+        onConfirm={handleDelete}
+        title="Confirm Delete"
+        message={`Are you sure you want to delete "${confirmDelete?.name}"?`}
+        confirmText="Delete"
+      />
+
+      <ToastContainer />
     </AdminLayout>
   );
 }
