@@ -4,8 +4,8 @@ from .models import ParkingLocation
 
 class ParkingLocationSerializer(serializers.ModelSerializer):
     available_slots = serializers.SerializerMethodField()
-    start_time = serializers.SerializerMethodField()
-    end_time = serializers.SerializerMethodField()
+    start_time = serializers.CharField(read_only=True)
+    end_time = serializers.CharField(read_only=True)
 
     class Meta:
         model = ParkingLocation
@@ -13,10 +13,13 @@ class ParkingLocationSerializer(serializers.ModelSerializer):
         read_only_fields = ['created_at', 'updated_at']
 
     def get_available_slots(self, obj):
-        overlapping_count = getattr(obj, 'overlapping_count', None)
-        if overlapping_count is not None:
-            return max(obj.slots - overlapping_count, 0)
-        return obj.available_slots()
+        """
+        Returns the available slots for the parking location
+        using the time range provided in the serializer context.
+        """
+        start_time = self.context.get('start_time')
+        end_time = self.context.get('end_time')
+        return obj.available_slots(start_time, end_time)
 
     def get_start_time(self, obj):
         return self.context.get('start_time')
