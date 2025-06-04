@@ -10,3 +10,16 @@ export const validateReservationTimes = (start_time, end_time) => {
 
   return null;
 };
+
+export const getValidGroupByOptions = (groupedRange) => {
+  switch (groupedRange) {
+    case "week":
+      return ["day"];
+    case "month":
+      return ["day", "week"];
+    case "year":
+      return ["day", "week", "month"];
+    default:
+      return [];
+  }
+};

@@ -1,71 +1,23 @@
-import react, { useEffect, useState } from "react";
 import ApexCharts from "react-apexcharts";
 import AdminLayout from "../../layouts/AdminLayout";
-import {
-  fetchGroupedSummary,
-  fetchTodaySummary,
-  fetchTotalSummary,
-} from "../../services/admin/reservationSummaryService";
-import { formatDate, formatPeriodLabel, getDaysDiff } from "../../utils/format";
-import { buildChartOptions } from "../../utils/chart";
+import { formatDate, getDaysDiff } from "../../utils/format";
 import SummaryCard from "../../components/admin/SummaryCard";
 import TotalRangeSummaryCard from "../../components/admin/TotalRangeSummaryCard";
-
-const RANGE_OPTIONS = ["week", "month", "year"];
-const GROUP_BY_OPTIONS = ["day", "week", "month", "year"];
+import { useAdminSummary } from "../../hooks/admin/useAdminSummary";
+import { getValidGroupByOptions } from "../../utils/validation";
 
 function AdminHome() {
-  const [todaySummary, setTodaySummary] = useState(null);
-  const [totalSummary, setTotalSummary] = useState(null);
-  const [totalRange, setTotalRange] = useState("week");
-  const [groupedRange, setGroupedRange] = useState("week");
-  const [groupBy, setGroupBy] = useState("day");
-  const [chartData, setChartData] = useState({
-    options: {},
-    series: [],
-  });
-
-  const validGroupByOptions = () => {
-    if (groupedRange === "week") return ["day"];
-    if (groupedRange === "month") return ["day", "week"];
-    if (groupedRange === "year") return ["day", "week", "month"];
-    return [];
-  };
-
-  useEffect(() => {
-    if (!validGroupByOptions().includes(groupBy)) {
-      setGroupBy(validGroupByOptions()[0]);
-    }
-  }, [groupedRange]);
-
-  useEffect(() => {
-    const loadSummaries = async () => {
-      try {
-        const [today, grouped, total] = await Promise.all([
-          fetchTodaySummary(),
-          fetchGroupedSummary({ groupBy, range: groupedRange, sort: "asc" }),
-          fetchTotalSummary({ range: totalRange }),
-        ]);
-
-        setTodaySummary(today);
-        setTotalSummary(total);
-
-        const categories = grouped.data.map((item) =>
-          formatPeriodLabel(item.period, groupBy)
-        );
-        const seriesData = grouped.data.map((item) => item.total_reservations);
-
-        setChartData({
-          options: buildChartOptions(categories),
-          series: [{ name: "Total Reservations", data: seriesData }],
-        });
-      } catch (error) {
-        console.error("Failed to load summaries", error);
-      }
-    };
-
-    loadSummaries();
-  }, [groupBy, groupedRange, totalRange]);
+  const {
+    todaySummary,
+    totalSummary,
+    totalRange,
+    setTotalRange,
+    groupedRange,
+    setGroupedRange,
+    groupBy,
+    setGroupBy,
+    chartData,
+  } = useAdminSummary();
 
   return (
     <AdminLayout>
@@ -96,7 +48,7 @@ function AdminHome() {
               onChange={(e) => setGroupedRange(e.target.value)}
               className="border rounded p-1 text-sm"
             >
-              {RANGE_OPTIONS.map((opt) => (
+              {["week", "month", "year"].map((opt) => (
                 <option key={opt} value={opt}>
                   {opt.charAt(0).toUpperCase() + opt.slice(1)}
                 </option>
@@ -108,11 +60,11 @@ function AdminHome() {
               onChange={(e) => setGroupBy(e.target.value)}
               className="border rounded p-1 text-sm"
             >
-              {GROUP_BY_OPTIONS.map((opt) => (
+              {["day", "week", "month", "year"].map((opt) => (
                 <option
                   key={opt}
                   value={opt}
-                  disabled={!validGroupByOptions().includes(opt)}
+                  disabled={!getValidGroupByOptions(groupedRange).includes(opt)}
                 >
                   {opt.charAt(0).toUpperCase() + opt.slice(1)}
                 </option>
