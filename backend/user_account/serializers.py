@@ -1,23 +1,28 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, AuthUser
-from rest_framework_simplejwt.tokens import Token
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from user_account.models import Profile
 
-
 class AdminUserSerializer(serializers.ModelSerializer):
+    """
+    Serializer for admin to view user details.
+    """
     class Meta:
         model = User
         fields = ('id', 'username', 'first_name', 'last_name', 'is_active', 'date_joined', 'last_login')
         read_only_fields = ('id', 'username', 'first_name', 'last_name', 'date_joined', 'last_login')
 
 class UserSerializer(serializers.ModelSerializer):
+    """
+    Serializer for user registration and profile update.
+    Handles password, username, and name changes via Profile methods.
+    """
     new_password = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'password', 'new_password','first_name', 'last_name')
+        fields = ('id', 'username', 'password', 'new_password', 'first_name', 'last_name')
         extra_kwargs = {
             'password': {'write_only': True, 'required': True},
             'first_name': {'required': True},
@@ -25,6 +30,9 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
+        """
+        Creates a new user and associated profile.
+        """
         user = User.objects.create_user(
             username=validated_data['username'],
             password=validated_data['password'],
@@ -35,6 +43,9 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
     def update(self, instance, validated_data):
+        """
+        Updates user profile fields using Profile helper methods.
+        """
         profile = instance.profile
 
         username = validated_data.get('username')
@@ -55,20 +66,22 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    """
+    Custom JWT serializer that adds user role and username to the token.
+    """
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
-
         token['role'] = 'admin' if user.is_staff else 'user'
         token['username'] = user.username
-
         return token
 
 class AdminTokenObtainPairSerializer(CustomTokenObtainPairSerializer):
+    """
+    JWT serializer for admin login. Only allows staff users to obtain a token.
+    """
     def validate(self, attrs):
         data = super().validate(attrs)
-
         if not self.user.is_staff:
             raise serializers.ValidationError('No admin privileges.')
-
         return data

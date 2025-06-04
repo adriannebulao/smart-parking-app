@@ -12,7 +12,7 @@ function ReservationCard({ resv, onCancel, showUser = true }) {
   };
 
   return (
-    <div className="flex items-center justify-between bg-white p-4 rounded-lg shadow border">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white p-4 rounded-lg shadow border gap-4">
       <div className="flex-grow min-w-0 space-y-1">
         <p className="font-semibold text-base truncate">
           {resv.parking_location_name}

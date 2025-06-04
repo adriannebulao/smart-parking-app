@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronDown, LogOut } from "lucide-react";
+import { ChevronDown, LogOut, Menu, X } from "lucide-react";
 import { jwtDecode } from "jwt-decode";
 import whiteLogo from "../assets/white_logo.svg";
 import { getCurrentUser } from "../utils/auth";
 import "../styles/index.css";
 
-export default function TopBar() {
+export default function TopBar({ onMenuToggle, isSidebarOpen }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -33,7 +33,10 @@ export default function TopBar() {
 
   return (
     <div className="w-full bg-primary shadow px-6 py-4 flex justify-between items-center">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
+        <button onClick={onMenuToggle} className="md:hidden text-background">
+          {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
         <img src={whiteLogo} alt="Logo" className="h-10 w-10" />
         <span className="text-xl font-semibold text-background">{title}</span>
       </div>
@@ -43,12 +46,15 @@ export default function TopBar() {
           onClick={() => setMenuOpen(!menuOpen)}
           className="flex items-center gap-1 text-background hover:text-secondary focus:outline-none"
         >
-          <span className="font-medium">{username}</span>
+          <span className="hidden md:inline font-medium">{username}</span>
           <ChevronDown size={18} />
         </button>
 
         {menuOpen && (
           <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-md z-10">
+            <div className="md:hidden px-4 py-2 text-sm font-medium text-text border-b border-gray-200">
+              {username}
+            </div>
             <button
               onClick={handleLogout}
               className="w-full flex items-center gap-2 px-4 py-2 text-sm text-text hover:bg-gray-100"

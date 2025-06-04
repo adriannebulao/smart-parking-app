@@ -1,9 +1,9 @@
-function ReservationStatusFilter({ value, onChange }) {
+function ReservationStatusFilter({ value, onChange, className = "" }) {
   return (
     <select
-      className="border px-3 py-2 rounded-md w-full sm:w-48"
       value={value}
       onChange={onChange}
+      className={`border px-3 py-2 rounded-md ${className}`}
       aria-label="Filter reservations by status"
     >
       <option value="all">All</option>

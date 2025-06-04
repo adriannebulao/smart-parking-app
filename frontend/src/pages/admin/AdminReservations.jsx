@@ -8,6 +8,7 @@ import LoadingScreen from "../../components/LoadingScreen";
 import { ToastContainer } from "react-toastify";
 import { formatDateTime } from "../../utils/reservationUtils";
 import { useReservations } from "../../hooks/useReservations";
+import { useRef } from "react";
 
 function AdminReservations() {
   const {
@@ -25,18 +26,22 @@ function AdminReservations() {
     cancel,
   } = useReservations();
 
+  const mainContentRef = useRef(null);
+
   return (
     <AdminLayout>
-      <div className="p-4 flex flex-col">
+      <div ref={mainContentRef} className="p-4 flex flex-col">
         {/* Header & Controls */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-          <h2 className="text-xl font-bold mb-4">Reservations</h2>
-          <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full sm:w-auto">
+          <h2 className="text-xl font-bold">Reservations</h2>
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             <SearchInput
+              className="w-full sm:w-auto"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
             <ReservationStatusFilter
+              className="w-full sm:w-48"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
             />
@@ -60,8 +65,14 @@ function AdminReservations() {
             ))}
 
             <PaginationControls
-              onPrev={() => fetchReservations(prevUrl)}
-              onNext={() => fetchReservations(nextUrl)}
+              onPrev={() => {
+                fetchReservations(prevUrl);
+                mainContentRef.current?.scrollIntoView({ behavior: "smooth" });
+              }}
+              onNext={() => {
+                fetchReservations(nextUrl);
+                mainContentRef.current?.scrollIntoView({ behavior: "smooth" });
+              }}
               hasPrev={!!prevUrl}
               hasNext={!!nextUrl}
               loading={loading}

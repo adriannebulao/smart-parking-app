@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import AdminLayout from "../../layouts/AdminLayout";
 import ConfirmActionModal from "../../components/ConfirmActionModal";
 import UserCard from "../../components/admin/UserCard";
@@ -26,6 +26,7 @@ function AdminUserManagement() {
   } = useUserManagement();
 
   const [confirmDeactivate, setConfirmDeactivate] = useState(null);
+  const mainContentRef = useRef(null);
 
   const handleDeactivate = () => {
     if (!confirmDeactivate) return;
@@ -35,12 +36,11 @@ function AdminUserManagement() {
 
   return (
     <AdminLayout>
-      <div className="p-4 flex flex-col">
-        {/* Header & Filters */}
+      <div ref={mainContentRef} className="p-4 flex flex-col h-full">
+        {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-          <h2 className="text-xl font-bold mb-4">Users</h2>
-
-          <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full sm:w-auto">
+          <h2 className="text-xl font-bold">Users</h2>
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             <SearchInput
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -52,11 +52,11 @@ function AdminUserManagement() {
           </div>
         </div>
 
-        {/* Content */}
+        {/* Content Section */}
         {loading ? (
           <LoadingScreen />
         ) : users.length === 0 ? (
-          <p>No users found.</p>
+          <p className="text-gray-500">No users found.</p>
         ) : (
           <div className="flex flex-col flex-grow space-y-2 overflow-auto">
             {users.map((user) => (
@@ -68,8 +68,14 @@ function AdminUserManagement() {
             ))}
 
             <PaginationControls
-              onPrev={() => fetchUsers(prevUrl)}
-              onNext={() => fetchUsers(nextUrl)}
+              onPrev={() => {
+                fetchUsers(prevUrl);
+                mainContentRef.current?.scrollIntoView({ behavior: "smooth" });
+              }}
+              onNext={() => {
+                fetchUsers(nextUrl);
+                mainContentRef.current?.scrollIntoView({ behavior: "smooth" });
+              }}
               hasPrev={!!prevUrl}
               hasNext={!!nextUrl}
               loading={loading}

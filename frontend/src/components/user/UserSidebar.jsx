@@ -1,5 +1,13 @@
-import { Home, MapPin, CalendarCheck, User } from "lucide-react";
+import {
+  MapPin,
+  CalendarCheck,
+  User,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
+import useSidebarCollapse from "../../hooks/useSidebarCollapse";
+import useIsMobile from "../../hooks/useIsMobile";
 
 const navItems = [
   { name: "Parking Locations", icon: MapPin, path: "/user/parking-locations" },
@@ -7,31 +15,65 @@ const navItems = [
   { name: "Profile", icon: User, path: "/user/profile" },
 ];
 
-export default function UserSidebar() {
+export default function UserSidebar({ isOpen, onClose }) {
   const location = useLocation();
+  const { isCollapsed, toggleCollapse } = useSidebarCollapse(
+    "userSidebarCollapsed"
+  );
+  const isMobile = useIsMobile();
+  const shouldCollapse = !isMobile && isCollapsed;
 
   return (
-    <div className="h-full w-60 bg-background shadow-md border-r border-gray-200 flex flex-col justify-between transition-all duration-300">
-      <div className="mt-4 space-y-2">
-        {navItems.map(({ name, icon: Icon, path }) => {
-          const isActive = location.pathname === path;
-          return (
-            <NavLink
-              to={path}
-              key={name}
-              className={
-                "flex items-center gap-3 px-4 py-3 mx-2 rounded-lg text-sm font-medium transition " +
-                (isActive
-                  ? "border-l-4 bg-primary text-background hover:bg-primary/80"
-                  : "hover:bg-gray-200")
+    <div
+      className={`
+        fixed md:static top-0 left-0 h-full bg-background shadow-md border-r border-gray-200
+        transform transition-all duration-300 ease-in-out flex flex-col
+        ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0
+        ${shouldCollapse ? "w-16" : "w-60"}
+      `}
+      style={{
+        zIndex: isMobile ? 50 : 0,
+      }}
+    >
+      <div className="flex-1 mt-4 space-y-2">
+        {navItems.map(({ name, icon: Icon, path }) => (
+          <NavLink
+            to={path}
+            end={path === "/user" || path === "/admin"}
+            key={name}
+            onClick={onClose}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-4 py-3 mx-2 rounded-lg text-sm font-medium transition
+              ${
+                isActive
+                  ? "bg-primary text-background hover:bg-primary/90"
+                  : "hover:bg-gray-200"
               }
-            >
-              <Icon size={20} className="min-w-[20px]" />
+              ${shouldCollapse ? "justify-center" : ""}`
+            }
+            title={shouldCollapse ? name : ""}
+          >
+            <Icon size={20} className="min-w-[20px]" />
+            {!shouldCollapse && (
               <span className="whitespace-nowrap">{name}</span>
-            </NavLink>
-          );
-        })}
+            )}
+          </NavLink>
+        ))}
       </div>
+
+      <button
+        onClick={toggleCollapse}
+        className="hidden md:flex items-center justify-center gap-2 mx-4 mb-4 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        {shouldCollapse ? (
+          <ChevronsRight size={20} className="min-w-[20px]" />
+        ) : (
+          <>
+            <ChevronsLeft size={20} className="min-w-[20px]" />
+            <span>Collapse</span>
+          </>
+        )}
+      </button>
     </div>
   );
 }
