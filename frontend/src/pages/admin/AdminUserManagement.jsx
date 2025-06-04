@@ -1,10 +1,15 @@
 import { useEffect, useState } from "react";
-import api from "../../services/api";
 import AdminLayout from "../../layouts/AdminLayout";
-import { XCircle } from "lucide-react";
+import ConfirmDeactivateModal from "../../components/admin/ConfirmDeactivateModal";
+import UserCard from "../../components/admin/UserCard";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Modal from "../../components/Modal";
+import { buildUserManagementUrl } from "../../utils/urlBuilder";
+
+import {
+  getUsers,
+  deactivateUser,
+} from "../../services/adminUserManagementService";
 
 function AdminUserManagement() {
   const [users, setUsers] = useState([]);
@@ -19,50 +24,27 @@ function AdminUserManagement() {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    let query = `/api/admin/manage-users/?search=${encodeURIComponent(search)}`;
-
-    if (statusFilter === "active") {
-      query += `&is_active=true`;
-    } else if (statusFilter === "deactivated") {
-      query += `&is_active=false`;
-    } else if (statusFilter === "all") {
-      query += `&ordering=-is_active`;
-    }
-
-    fetchUsers(query);
+    const url = buildUserManagementUrl(statusFilter, search);
+    fetchUsers(url);
   }, [statusFilter, search]);
 
-  const fetchUsers = (url = "/api/admin/manage-users/") => {
+  const fetchUsers = (url) => {
     setLoading(true);
-    api
-      .get(url)
+    getUsers(url)
       .then((res) => {
         setUsers(res.data.results);
-        setCurrentUrl(url);
         setNextUrl(res.data.next);
         setPrevUrl(res.data.previous);
+        setCurrentUrl(url);
       })
       .catch(() => toast.error("Failed to fetch users"))
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => {
-    fetchUsers(currentUrl);
-  }, []);
-
-  const handleFilterChange = (e) => {
-    setStatusFilter(e.target.value);
-  };
-
-  const handleSearchChange = (e) => {
-    setSearch(e.target.value);
-  };
-
   const handleDeactivate = () => {
     if (!confirmDeactivate) return;
 
-    api
-      .post(`/api/admin/manage-users/${confirmDeactivate.id}/deactivate/`)
+    deactivateUser(confirmDeactivate.id)
       .then(() => {
         toast.success(`User ${confirmDeactivate.username} deactivated.`);
         fetchUsers(currentUrl);
@@ -74,6 +56,7 @@ function AdminUserManagement() {
   return (
     <AdminLayout>
       <div className="p-4 h-screen flex flex-col">
+        {/* Header & Filters */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <h2 className="text-xl font-bold mb-4">Users</h2>
 
@@ -83,12 +66,12 @@ function AdminUserManagement() {
               placeholder="Search by username or name"
               className="border px-3 py-2 rounded-md w-full sm:w-72"
               value={search}
-              onChange={handleSearchChange}
+              onChange={(e) => setSearch(e.target.value)}
             />
             <select
               className="border px-3 py-2 rounded-md w-full sm:w-48"
               value={statusFilter}
-              onChange={handleFilterChange}
+              onChange={(e) => setStatusFilter(e.target.value)}
             >
               <option value="all">All</option>
               <option value="active">Active</option>
@@ -97,54 +80,20 @@ function AdminUserManagement() {
           </div>
         </div>
 
+        {/* Content */}
         {loading ? (
           <p>Loading...</p>
         ) : users.length === 0 ? (
           <p>No users found.</p>
         ) : (
           <div className="flex flex-col flex-grow space-y-2 overflow-auto">
-            {users.map((user) => {
-              const status = user.is_active ? "Active" : "Deactivated";
-
-              return (
-                <div
-                  key={user.id}
-                  className="flex items-center justify-between bg-white p-4 rounded-lg shadow border"
-                >
-                  <div className="flex-grow min-w-0">
-                    <p className="font-semibold text-lg truncate">
-                      {user.first_name} {user.last_name}
-                    </p>
-                    <p className="text-sm text-gray-600 truncate">
-                      @{user.username}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-6 flex-shrink-0">
-                    <span
-                      className={`px-3 py-1 rounded text-sm font-semibold ${
-                        user.is_active
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {status}
-                    </span>
-
-                    {user.is_active && (
-                      <button
-                        onClick={() => setConfirmDeactivate(user)}
-                        title="Deactivate User"
-                        className="flex items-center gap-1 text-black hover:text-gray-700"
-                      >
-                        <XCircle size={20} />
-                        <span>Deactivate</span>
-                      </button>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+            {users.map((user) => (
+              <UserCard
+                key={user.id}
+                user={user}
+                onDeactivate={setConfirmDeactivate}
+              />
+            ))}
 
             <div className="flex justify-end gap-4 mt-4">
               <button
@@ -165,35 +114,13 @@ function AdminUserManagement() {
           </div>
         )}
 
-        {confirmDeactivate && (
-          <Modal
-            isOpen={!!confirmDeactivate}
-            onClose={() => setConfirmDeactivate(null)}
-            footer={
-              <>
-                <button
-                  onClick={() => setConfirmDeactivate(null)}
-                  className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleDeactivate}
-                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-                >
-                  Confirm Deactivate
-                </button>
-              </>
-            }
-          >
-            <h2 className="text-lg font-bold mb-4">Confirm Deactivation</h2>
-            <p>
-              Are you sure you want to deactivate user{" "}
-              <strong>{confirmDeactivate.username}</strong> (
-              {confirmDeactivate.first_name} {confirmDeactivate.last_name})?
-            </p>
-          </Modal>
-        )}
+        {/* Modal */}
+        <ConfirmDeactivateModal
+          user={confirmDeactivate}
+          isOpen={!!confirmDeactivate}
+          onClose={() => setConfirmDeactivate(null)}
+          onConfirm={handleDeactivate}
+        />
 
         <ToastContainer />
       </div>

@@ -9,3 +9,17 @@ export const buildReservationUrl = (status, search) => {
   if ([...params].length > 0) url += `?${params.toString()}`;
   return url;
 };
+
+export const buildUserManagementUrl = (status, search) => {
+  let url = `/api/admin/manage-users/?search=${encodeURIComponent(search)}`;
+
+  if (status === "active") {
+    url += `&is_active=true`;
+  } else if (status === "deactivated") {
+    url += `&is_active=false`;
+  } else if (status === "all") {
+    url += `&ordering=-is_active`;
+  }
+
+  return url;
+};
