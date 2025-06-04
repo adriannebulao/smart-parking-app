@@ -1,56 +1,35 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AdminLayout from "../../layouts/AdminLayout";
 import ConfirmDeactivateModal from "../../components/admin/ConfirmDeactivateModal";
 import UserCard from "../../components/admin/UserCard";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { buildUserManagementUrl } from "../../utils/urlBuilder";
+import { ToastContainer } from "react-toastify";
 
-import {
-  getUsers,
-  deactivateUser,
-} from "../../services/admin/userManagementService";
+import SearchInput from "../../components/SearchInput";
+import PaginationControls from "../../components/PaginationControls";
+import UserStatusFilter from "../../components/admin/UserStatusFilter";
+
+import { useUserManagement } from "../../hooks/admin/useUserManagement";
 
 function AdminUserManagement() {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [nextUrl, setNextUrl] = useState(null);
-  const [prevUrl, setPrevUrl] = useState(null);
-  const [currentUrl, setCurrentUrl] = useState(
-    "/api/admin/manage-users/?ordering=-is_active"
-  );
+  const {
+    users,
+    loading,
+    nextUrl,
+    prevUrl,
+    search,
+    setSearch,
+    statusFilter,
+    setStatusFilter,
+    fetchUsers,
+    deactivate,
+  } = useUserManagement();
+
   const [confirmDeactivate, setConfirmDeactivate] = useState(null);
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [search, setSearch] = useState("");
-
-  useEffect(() => {
-    const url = buildUserManagementUrl(statusFilter, search);
-    fetchUsers(url);
-  }, [statusFilter, search]);
-
-  const fetchUsers = (url) => {
-    setLoading(true);
-    getUsers(url)
-      .then((res) => {
-        setUsers(res.data.results);
-        setNextUrl(res.data.next);
-        setPrevUrl(res.data.previous);
-        setCurrentUrl(url);
-      })
-      .catch(() => toast.error("Failed to fetch users"))
-      .finally(() => setLoading(false));
-  };
 
   const handleDeactivate = () => {
     if (!confirmDeactivate) return;
 
-    deactivateUser(confirmDeactivate.id)
-      .then(() => {
-        toast.success(`User ${confirmDeactivate.username} deactivated.`);
-        fetchUsers(currentUrl);
-        setConfirmDeactivate(null);
-      })
-      .catch(() => toast.error("Failed to deactivate user."));
+    deactivate(confirmDeactivate, () => setConfirmDeactivate(null));
   };
 
   return (
@@ -61,22 +40,14 @@ function AdminUserManagement() {
           <h2 className="text-xl font-bold mb-4">Users</h2>
 
           <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full sm:w-auto">
-            <input
-              type="text"
-              placeholder="Search by username or name"
-              className="border px-3 py-2 rounded-md w-full sm:w-72"
+            <SearchInput
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <select
-              className="border px-3 py-2 rounded-md w-full sm:w-48"
+            <UserStatusFilter
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              <option value="all">All</option>
-              <option value="active">Active</option>
-              <option value="deactivated">Deactivated</option>
-            </select>
+            />
           </div>
         </div>
 
@@ -95,22 +66,13 @@ function AdminUserManagement() {
               />
             ))}
 
-            <div className="flex justify-end gap-4 mt-4">
-              <button
-                onClick={() => fetchUsers(prevUrl)}
-                disabled={!prevUrl || loading}
-                className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
-              >
-                Previous
-              </button>
-              <button
-                onClick={() => fetchUsers(nextUrl)}
-                disabled={!nextUrl || loading}
-                className="px-4 py-2 bg-primary text-white rounded disabled:opacity-50"
-              >
-                Next
-              </button>
-            </div>
+            <PaginationControls
+              onPrev={() => fetchUsers(prevUrl)}
+              onNext={() => fetchUsers(nextUrl)}
+              hasPrev={!!prevUrl}
+              hasNext={!!nextUrl}
+              loading={loading}
+            />
           </div>
         )}
 
