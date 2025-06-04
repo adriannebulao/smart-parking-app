@@ -30,18 +30,28 @@ class ReservationViewSet(
     serializer_class = ReservationSerializer
     permission_classes = (permissions.IsAuthenticated, IsAdminOrOwner)
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
-    ordering_fields = ['id', 'start_time', 'end_time', 'created_at', 'updated_at', 'user', 'parking_location', 'is_cancelled']
-    filterset_fields = ['id', 'start_time', 'end_time', 'created_at', 'updated_at', 'user', 'parking_location',
-                       'is_cancelled']
+    ordering_fields = [
+        'id', 'start_time', 'end_time', 'created_at', 'updated_at',
+        'user', 'parking_location', 'is_cancelled'
+    ]
+    filterset_fields = [
+        'id', 'start_time', 'end_time', 'created_at', 'updated_at',
+        'user', 'parking_location', 'is_cancelled'
+    ]
     search_fields = ['user__username', 'parking_location__name']
 
     def get_queryset(self):
+        """
+        Returns reservations for the current user, or all if admin.
+        Supports filtering by reservation status via query params.
+        """
         user = self.request.user
         queryset = Reservation.objects.all() if user.is_staff else Reservation.objects.filter(user=user)
 
         status_param = self.request.query_params.get('status')
         now = timezone.now()
 
+        # Filter reservations based on status query parameter
         if status_param == 'upcoming':
             queryset = queryset.filter(end_time__gt=now, is_cancelled=False)
         elif status_param == 'completed':
@@ -54,18 +64,32 @@ class ReservationViewSet(
         return queryset
 
     def perform_create(self, serializer):
+        """
+        Automatically sets the user to the current user when creating a reservation.
+        """
         serializer.save(user=self.request.user)
 
     @action(detail=True, methods=['post'], url_path='cancel')
     def cancel(self, request, pk=None):
+        """
+        Cancels a reservation if it hasn't started yet and isn't already cancelled.
+        No user (including staff) can cancel after the reservation has started.
+        """
         reservation = self.get_object()
         now = timezone.now()
 
-        if not request.user.is_staff and reservation.start_time <= now:
-            raise ValidationError("You cannot cancel a reservation after it has started.")
+        # Prevent cancellation if the reservation has already started
+        if reservation.start_time <= now:
+            return Response(
+                {'detail': 'You cannot cancel a reservation after it has started.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         if reservation.is_cancelled:
-            return Response({'detail': 'Reservation is already cancelled.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {'detail': 'Reservation is already cancelled.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         reservation.cancel()
         return Response({'detail': 'Reservation cancelled successfully.'}, status=status.HTTP_200_OK)
@@ -73,6 +97,10 @@ class ReservationViewSet(
     @extend_schema(tags=['Admin'])
     @action(detail=False, methods=['get'], url_path='summary')
     def summary(self, request):
+        """
+        Returns reservation summary statistics for admins.
+        Supports 'today', 'total', and 'grouped' summary types.
+        """
         if not request.user.is_staff:
             raise PermissionDenied("You do not have permission to access this resource")
 
@@ -80,7 +108,6 @@ class ReservationViewSet(
         today = timezone.now().date()
 
         summary_type, group_by, sort_order = validate_summary_params(params)
-
         start_date, end_date = get_date_range(params, today)
         year, month, week, day = get_time_filters(params)
 
@@ -98,7 +125,9 @@ class ReservationViewSet(
             return summary_total(queryset, year, month, week, day, start_date, end_date, has_explicit_time_filter)
 
         if summary_type == 'grouped':
-            return summary_grouped(queryset, group_by, sort_order, year, month, week, day, start_date, end_date,
-                                   has_explicit_time_filter)
+            return summary_grouped(
+                queryset, group_by, sort_order, year, month, week, day,
+                start_date, end_date, has_explicit_time_filter
+            )
 
         return Response({"error": "Invalid summary_type."}, status=status.HTTP_400_BAD_REQUEST)
