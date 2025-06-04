@@ -29,7 +29,7 @@ function UserProfile() {
 
   return (
     <UserLayout>
-      <div className="p-4 flex flex-col max-w-2xl mx-auto w-full">
+      <div className="p-4 flex flex-col mx-auto sm:mx-0 w-full max-w-2xl">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <h2 className="text-xl font-bold">My Profile</h2>
           {!isEditing && (

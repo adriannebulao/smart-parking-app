@@ -35,10 +35,11 @@ function AdminUserManagement() {
 
   return (
     <AdminLayout>
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-        <h2 className="text-xl font-bold mb-4">Users</h2>
-        <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full sm:w-auto">
-          <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full sm:w-auto">
+      <div className="p-4 flex flex-col h-full">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+          <h2 className="text-xl font-bold">Users</h2>
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             <SearchInput
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -50,11 +51,11 @@ function AdminUserManagement() {
           </div>
         </div>
 
-        {/* Content */}
+        {/* Content Section */}
         {loading ? (
           <LoadingScreen />
         ) : users.length === 0 ? (
-          <p>No users found.</p>
+          <p className="text-gray-500">No users found.</p>
         ) : (
           <div className="flex flex-col flex-grow space-y-2 overflow-auto">
             {users.map((user) => (
