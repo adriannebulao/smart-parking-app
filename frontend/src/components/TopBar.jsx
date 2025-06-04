@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronDown, LogOut } from "lucide-react";
+import { ChevronDown, LogOut, Menu, X } from "lucide-react";
 import { jwtDecode } from "jwt-decode";
 import whiteLogo from "../assets/white_logo.svg";
 import { getCurrentUser } from "../utils/auth";
 import "../styles/index.css";
 
-export default function TopBar() {
+export default function TopBar({ onMenuToggle, isSidebarOpen }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -33,7 +33,10 @@ export default function TopBar() {
 
   return (
     <div className="w-full bg-primary shadow px-6 py-4 flex justify-between items-center">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
+        <button onClick={onMenuToggle} className="md:hidden text-background">
+          {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
         <img src={whiteLogo} alt="Logo" className="h-10 w-10" />
         <span className="text-xl font-semibold text-background">{title}</span>
       </div>

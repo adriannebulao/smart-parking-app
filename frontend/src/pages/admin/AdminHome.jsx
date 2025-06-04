@@ -40,9 +40,11 @@ function AdminHome() {
       </div>
 
       <div className="bg-white p-4 rounded shadow">
-        <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-          <h2 className="text-lg font-semibold flex items-center gap-2 flex-wrap">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+          <h2 className="text-lg font-semibold">
             Total Reservations in the Past
+          </h2>
+          <div className="flex gap-2 flex-wrap">
             <select
               value={groupedRange}
               onChange={(e) => setGroupedRange(e.target.value)}
@@ -70,15 +72,17 @@ function AdminHome() {
                 </option>
               ))}
             </select>
-          </h2>
+          </div>
         </div>
 
-        <ApexCharts
-          options={chartData.options}
-          series={chartData.series}
-          type="bar"
-          height={350}
-        />
+        <div className="overflow-x-auto">
+          <ApexCharts
+            options={chartData.options}
+            series={chartData.series}
+            type="bar"
+            height={350}
+          />
+        </div>
       </div>
     </AdminLayout>
   );
