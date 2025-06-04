@@ -4,7 +4,7 @@ import { Plus } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import SearchInput from "../../components/SeachInput";
+import SearchInput from "../../components/SearchInput";
 import ParkingLocationCard from "../../components/admin/ParkingLocationCard";
 import ParkingLocationModal from "../../components/admin/ParkingLocationModal";
 import ConfirmDeleteModal from "../../components/admin/ConfirmDeleteModal";

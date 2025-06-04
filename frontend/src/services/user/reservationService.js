@@ -1,16 +1,9 @@
 import api from "../api";
 
-export const fetchParkingLocations = (url, searchTerm = "") => {
-  let fullUrl = url;
-  if (searchTerm) {
-    fullUrl += fullUrl.includes("?")
-      ? `&search=${encodeURIComponent(searchTerm)}`
-      : `?search=${encodeURIComponent(searchTerm)}`;
-  }
+export async function fetchReservationsApi(url) {
+  return api.get(url);
+}
 
-  return api.get(fullUrl);
-};
-
-export const makeReservation = (payload) => {
-  return api.post("/api/reservations/", payload);
-};
+export async function cancelReservationApi(reservationId) {
+  return api.post(`/api/reservations/${reservationId}/cancel/`);
+}

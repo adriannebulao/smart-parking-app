@@ -7,7 +7,7 @@ import ReserveModal from "../../components/user/ReserveModal";
 import {
   fetchParkingLocations,
   makeReservation,
-} from "../../services/user/reservationService";
+} from "../../services/user/parkingLocationService";
 import { debounce } from "../../utils/debounce";
 
 function UserParkingLocations() {
