@@ -5,10 +5,10 @@ import { toast, ToastContainer } from "react-toastify";
 import ReserveModal from "../../components/user/ReserveModal";
 import SearchInput from "../../components/SearchInput";
 import PaginationControls from "../../components/PaginationControls";
+import LoadingScreen from "../../components/LoadingScreen";
 
 import { useParkingLocations } from "../../hooks/user/useParkingLocations";
 import { useReservationForm } from "../../hooks/user/useReservationForm";
-import LoadingScreen from "../../components/LoadingScreen";
 
 function UserParkingLocations() {
   const {
@@ -27,29 +27,28 @@ function UserParkingLocations() {
 
   return (
     <UserLayout>
-      <div className="p-4 flex flex-col h-full">
-        <div className="flex justify-between items-center mb-4 flex-shrink-0 gap-4">
-          <h1 className="text-xl font-bold whitespace-nowrap">
-            Parking Locations
-          </h1>
-
-          <SearchInput
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+      <div className="p-4 flex flex-col">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
+          <h1 className="text-xl font-bold">Parking Locations</h1>
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <SearchInput
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
         </div>
 
-        {loading ? (
-          <LoadingScreen />
-        ) : (
-          <div className="flex flex-col flex-grow space-y-2 overflow-auto">
-            {locations.map((loc) => (
+        <div className="flex-grow overflow-auto space-y-2">
+          {loading ? (
+            <LoadingScreen />
+          ) : (
+            locations.map((loc) => (
               <div
                 key={loc.id}
-                className="flex items-center justify-between bg-white p-4 rounded-lg shadow border"
+                className="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-4 rounded-lg shadow border gap-2"
               >
                 <div className="flex-grow min-w-0">
-                  <span className="font-semibold text-base truncate">
+                  <span className="font-semibold text-base block truncate">
                     {loc.name}
                   </span>
                   <div className="text-sm text-gray-600 mt-1">
@@ -59,23 +58,22 @@ function UserParkingLocations() {
 
                 <button
                   onClick={() => setReservingLocation(loc)}
-                  className="text-black hover:text-gray-700 flex items-center gap-1"
+                  className="text-black hover:text-gray-700 flex items-center justify-center gap-1 w-full sm:w-auto px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200"
                 >
                   <CalendarCheck size={20} />
                   Reserve
                 </button>
               </div>
-            ))}
-
-            <PaginationControls
-              onPrev={goPrev}
-              onNext={goNext}
-              hasPrev={!!prevUrl}
-              hasNext={!!nextUrl}
-              loading={loading}
-            />
-          </div>
-        )}
+            ))
+          )}
+          <PaginationControls
+            onPrev={goPrev}
+            onNext={goNext}
+            hasPrev={!!prevUrl}
+            hasNext={!!nextUrl}
+            loading={loading}
+          />
+        </div>
 
         <ReserveModal
           isOpen={!!reservingLocation}
