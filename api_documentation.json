@@ -1,0 +1,1156 @@
+{
+	"info": {
+		"_postman_id": "4cb290cc-56ff-421c-a798-96cf7aff35b2",
+		"name": "Smart Parking App",
+		"description": "API documentation for my backend Django endpoints. Features parking location, reservations, and user modules. Endpoints are secured via JWTs.\n\nFor authentication:\n\n- Use /admin/login/ to acquire bearer token for admin endpoints\n    \n- Use /users/login/ to acquire bearer token for user endpoints\n    \n\nFor filtering/sorting:\n\n- Search: **?search=** or **&search=**\n    \n- Sorting: **?ordering=** or **&ordering=**\n    \n    - Ascending: **?ordering=id**\n        \n    - Descending: **?ordering=-id**",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "44920352",
+		"_collection_link": "https://www.postman.com/adriannebulao/workspace/smart-parking-app/collection/44920352-4cb290cc-56ff-421c-a798-96cf7aff35b2?action=share&source=collection_link&creator=44920352"
+	},
+	"item": [
+		{
+			"name": "parking_locations",
+			"item": [
+				{
+					"name": "get all",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{vault:json-web-token}}",
+								"description": "user",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/parking_locations/?search=&odering=&slots=",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"parking_locations",
+								""
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": ""
+								},
+								{
+									"key": "odering",
+									"value": ""
+								},
+								{
+									"key": "slots",
+									"value": ""
+								}
+							]
+						},
+						"description": "List all parking locations (admin and user)\n\nCan search by: **name**\n\nCan order by: **id**, **name**, **slots**, **created_at**, **updated_at**\n\nCan filter by: **slots**"
+					},
+					"response": []
+				},
+				{
+					"name": "get",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{vault:json-web-token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/parking_locations/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"parking_locations",
+								"1"
+							]
+						},
+						"description": "Retrieve specific parking location by ID (admin and user)"
+					},
+					"response": []
+				},
+				{
+					"name": "admin create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{vault:json-web-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Parking Location 2\",\r\n    \"slots\": 150\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/parking_locations/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"parking_locations",
+								""
+							]
+						},
+						"description": "Create new parking location (admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "admin update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{vault:json-web-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Parking Location 2\",\r\n    \"slots\": 50\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/parking_locations/1/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"parking_locations",
+								"1",
+								""
+							]
+						},
+						"description": "Update parking location by ID (admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "admin delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{vault:json-web-token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/parking_locations/1/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"parking_locations",
+								"1",
+								""
+							]
+						},
+						"description": "Delete a parking location by ID (admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "API endpoints for parking locations module"
+		},
+		{
+			"name": "reservations",
+			"item": [
+				{
+					"name": "admin get all",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{vault:json-web-token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/reservations/?ordering=&search=",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"reservations",
+								""
+							],
+							"query": [
+								{
+									"key": "ordering",
+									"value": ""
+								},
+								{
+									"key": "search",
+									"value": ""
+								}
+							]
+						},
+						"description": "Lists all reservations from all users (admin only)\n\nCan search by: **username**, **parking location name**\n\nCan order by: **id**, **start_time**, **end_time**, **created_at**, **updated_at**, **user**, **parking_location**, **is_cancelled**\n\nCan filter by: **id**, **start_time**, **end_time**, **created_at**, **updated_at**, **user**, **parking_location**, **is_cancelled**"
+					},
+					"response": []
+				},
+				{
+					"name": "admin get",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{vault:json-web-token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/reservations/5",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"reservations",
+								"5"
+							]
+						},
+						"description": "Retrieve a specific reservation from any user given a reservation ID (admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "user get all",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{vault:json-web-token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/reservations/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"reservations",
+								""
+							]
+						},
+						"description": "List all reservations belonging to the logged in user"
+					},
+					"response": []
+				},
+				{
+					"name": "user get",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{vault:json-web-token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/reservations/5",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"reservations",
+								"5"
+							]
+						},
+						"description": "Retrieve a specific reservation belonging to the logged in user"
+					},
+					"response": []
+				},
+				{
+					"name": "user create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{vault:json-web-token}}",
+								"description": "user",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"parking_location\": 3,\r\n    \"start_time\": \"2025-06-03T17:47:00+08:00\",\r\n    \"end_time\": \"2025-06-03T17:48:00+08:00\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/reservations/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"reservations",
+								""
+							]
+						},
+						"description": "Create a reservation given a parking location, start time, and end time"
+					},
+					"response": []
+				},
+				{
+					"name": "user cancel",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{vault:json-web-token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/reservations/1/cancel/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"reservations",
+								"1",
+								"cancel",
+								""
+							]
+						},
+						"description": "Cancel an upcoming reservation belonging to the logged in user"
+					},
+					"response": []
+				},
+				{
+					"name": "admin cancel",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{vault:json-web-token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/reservations/2/cancel/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"reservations",
+								"2",
+								"cancel",
+								""
+							]
+						},
+						"description": "Cancel any upcoming reservation belonging to any user"
+					},
+					"response": []
+				}
+			],
+			"description": "API endpoints for reservations module"
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"td21\",\r\n    \"password\": \"td21\",\r\n    \"first_name\": \"Tim\",\r\n    \"last_name\": \"Duncan\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/user/register/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"user",
+								"register",
+								""
+							]
+						},
+						"description": "Create a new non-admin user account"
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"lb33\",\r\n    \"password\": \"lb33\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/users/login/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"users",
+								"login",
+								""
+							]
+						},
+						"description": "Authentication for non-admin users, receive a refresh and access token"
+					},
+					"response": []
+				},
+				{
+					"name": "get profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{vault:json-web-token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/users/profile/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"users",
+								"profile",
+								""
+							]
+						},
+						"description": "Retrieve user profile information of logged in user"
+					},
+					"response": []
+				},
+				{
+					"name": "update profile",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{vault:json-web-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"new_password\": \"jerry\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/users/profile/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"users",
+								"profile",
+								""
+							]
+						},
+						"description": "Update user profile information (including password) of logged in user"
+					},
+					"response": []
+				}
+			],
+			"description": "API endpoints for user module"
+		},
+		{
+			"name": "admin",
+			"item": [
+				{
+					"name": "summary_reports",
+					"item": [
+						{
+							"name": "summary today",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{vault:json-web-token}}",
+										"description": "admin",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{vault:json-web-token}}",
+										"description": "user",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/reservations/summary/?summary_type=today",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"reservations",
+										"summary",
+										""
+									],
+									"query": [
+										{
+											"key": "summary_type",
+											"value": "today"
+										}
+									]
+								},
+								"description": "Get total number of reservations today"
+							},
+							"response": []
+						},
+						{
+							"name": "summary grouped specific",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{vault:json-web-token}}",
+										"description": "admin",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/reservations/summary/?summary_type=grouped&group_by=week&year=2026",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"reservations",
+										"summary",
+										""
+									],
+									"query": [
+										{
+											"key": "summary_type",
+											"value": "grouped"
+										},
+										{
+											"key": "group_by",
+											"value": "week"
+										},
+										{
+											"key": "year",
+											"value": "2026"
+										}
+									]
+								},
+								"description": "Get total reservations in 2026 grouped by week"
+							},
+							"response": []
+						},
+						{
+							"name": "summary grouped past",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{vault:json-web-token}}",
+										"description": "admin",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/reservations/summary/?summary_type=grouped&group_by=week&range=year",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"reservations",
+										"summary",
+										""
+									],
+									"query": [
+										{
+											"key": "summary_type",
+											"value": "grouped"
+										},
+										{
+											"key": "group_by",
+											"value": "week"
+										},
+										{
+											"key": "range",
+											"value": "year"
+										}
+									]
+								},
+								"description": "Get total reservations in the past year grouped by week"
+							},
+							"response": []
+						},
+						{
+							"name": "summary grouped range",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{vault:json-web-token}}",
+										"description": "admin",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/reservations/summary/?summary_type=grouped&group_by=day&start_date=2025-06-01",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"reservations",
+										"summary",
+										""
+									],
+									"query": [
+										{
+											"key": "summary_type",
+											"value": "grouped"
+										},
+										{
+											"key": "group_by",
+											"value": "day"
+										},
+										{
+											"key": "start_date",
+											"value": "2025-06-01"
+										}
+									]
+								},
+								"description": "Get total reservations from June 1, 2025 to today grouped by day"
+							},
+							"response": []
+						},
+						{
+							"name": "summary total specific",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{vault:json-web-token}}",
+										"description": "admin",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/reservations/summary/?summary_type=total&year=2026&month=6&day=1",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"reservations",
+										"summary",
+										""
+									],
+									"query": [
+										{
+											"key": "summary_type",
+											"value": "total"
+										},
+										{
+											"key": "year",
+											"value": "2026"
+										},
+										{
+											"key": "month",
+											"value": "6"
+										},
+										{
+											"key": "day",
+											"value": "1"
+										}
+									]
+								},
+								"description": "Get total reservations for the whole month of June 2026"
+							},
+							"response": []
+						},
+						{
+							"name": "summary total past",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{vault:json-web-token}}",
+										"description": "admin",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/reservations/summary/?summary_type=total&range=week",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"reservations",
+										"summary",
+										""
+									],
+									"query": [
+										{
+											"key": "summary_type",
+											"value": "total"
+										},
+										{
+											"key": "range",
+											"value": "week"
+										}
+									]
+								},
+								"description": "Get total reservations in the past week"
+							},
+							"response": []
+						},
+						{
+							"name": "summary total range",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{vault:json-web-token}}",
+										"description": "admin",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/reservations/summary/?summary_type=total&start_date=2025-05-01&end_date=2026-07-01",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"reservations",
+										"summary",
+										""
+									],
+									"query": [
+										{
+											"key": "summary_type",
+											"value": "total"
+										},
+										{
+											"key": "start_date",
+											"value": "2025-05-01"
+										},
+										{
+											"key": "end_date",
+											"value": "2026-07-01"
+										}
+									]
+								},
+								"description": "Get total reservations from May 1, 2025 to July 1, 2026"
+							},
+							"response": []
+						}
+					],
+					"description": "API endpoints for admin summary reports\n\nQuery params:\n\n- ?summary_type=today\n    \n- ?summary_type=grouped\n    \n    - &group_by=\n        \n        - day, week, month\n            \n    - &range=\n        \n        - week, month, year\n            \n    - &day=, &week=, &month=, &year=\n        \n    - &start_date=, &end_date=\n        \n- ?summary_type=total\n    \n    - &range=\n        \n        - week, month, year\n            \n    - &day=, &week=, &month=, &year=\n        \n    - &start_date=, &end_date="
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"adriannebulao\",\r\n    \"password\": \"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/admin/login/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"admin",
+								"login",
+								""
+							]
+						},
+						"description": "Authentication for admin users, receive a refresh and access token"
+					},
+					"response": []
+				},
+				{
+					"name": "list users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{vault:json-web-token}}",
+								"description": "admin",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{vault:json-web-token}}",
+								"description": "user",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/admin/manage-users/?ordering=is_active",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"admin",
+								"manage-users",
+								""
+							],
+							"query": [
+								{
+									"key": "ordering",
+									"value": "is_active"
+								}
+							]
+						},
+						"description": "List all users (admin only)\n\nCan search by: **username**, **first_name**, **last_name**\n\nCan order by: **id**, **username**, **first_name**, **last_name**, **is_active**\n\nCan filter by: **id**, **is_active**"
+					},
+					"response": []
+				},
+				{
+					"name": "get user",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{vault:json-web-token}}",
+								"description": "admin",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{vault:json-web-token}}",
+								"description": "user",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/admin/manage-users/3",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"admin",
+								"manage-users",
+								"3"
+							]
+						},
+						"description": "Retrieve profiel information for any user (admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "deactivate user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{vault:json-web-token}}",
+								"description": "admin",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{vault:json-web-token}}",
+								"description": "user",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/admin/manage-users/5/deactivate/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"admin",
+								"manage-users",
+								"5",
+								"deactivate",
+								""
+							]
+						},
+						"description": "Deactivate a specific user given an ID (admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "API endpoints relating to admin actions"
+		},
+		{
+			"name": "token",
+			"item": [
+				{
+					"name": "refresh",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{vault:json-web-token}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"refresh\": \"{{vault:json-web-token}}\"\r\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/token/refresh/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"token",
+								"refresh",
+								""
+							]
+						},
+						"description": "Given a refresh token, receive a new access token (admin and user)"
+					},
+					"response": []
+				}
+			],
+			"description": "API endpoints relating to JWTs"
+		}
+	]
+}
