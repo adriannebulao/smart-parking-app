@@ -1,3 +1,8 @@
+/**
+ * Builds chart options for reservation summary charts.
+ * @param {Array<string>} categories - X-axis categories.
+ * @returns {Object} Chart options object.
+ */
 export function buildChartOptions(categories) {
   return {
     chart: { id: "reservations-bar" },

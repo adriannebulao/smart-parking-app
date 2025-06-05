@@ -1,3 +1,8 @@
+/**
+ * Formats a date string to "MMM dd, yyyy".
+ * @param {string} dateString - Date string.
+ * @returns {string} Formatted date.
+ */
 export function formatDate(dateString) {
   if (!dateString) return "";
   const date = new Date(dateString);
@@ -8,6 +13,12 @@ export function formatDate(dateString) {
   }).format(date);
 }
 
+/**
+ * Calculates the difference in days between two dates (inclusive).
+ * @param {string} startDateStr - Start date string.
+ * @param {string} endDateStr - End date string.
+ * @returns {number} Number of days difference.
+ */
 export function getDaysDiff(startDateStr, endDateStr) {
   const start = new Date(startDateStr);
   const end = new Date(endDateStr);
@@ -15,6 +26,12 @@ export function getDaysDiff(startDateStr, endDateStr) {
   return Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
 }
 
+/**
+ * Formats a period label for grouped data (day, week, month).
+ * @param {string} period - Period string.
+ * @param {string} groupBy - Grouping type ("day", "week", "month").
+ * @returns {string} Formatted period label.
+ */
 export function formatPeriodLabel(period, groupBy) {
   if (!period) return "";
 

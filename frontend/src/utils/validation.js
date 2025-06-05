@@ -1,3 +1,9 @@
+/**
+ * Validates reservation start and end times.
+ * @param {string} start_time - ISO string for start time.
+ * @param {string} end_time - ISO string for end time.
+ * @returns {string|null} Error message or null if valid.
+ */
 export const validateReservationTimes = (start_time, end_time) => {
   if (!start_time || !end_time) return "Please fill both start and end time.";
 
@@ -11,6 +17,11 @@ export const validateReservationTimes = (start_time, end_time) => {
   return null;
 };
 
+/**
+ * Returns valid groupBy options based on the selected range.
+ * @param {string} groupedRange - The selected range ("week", "month", "year").
+ * @returns {string[]} Array of valid groupBy options.
+ */
 export const getValidGroupByOptions = (groupedRange) => {
   switch (groupedRange) {
     case "week":
