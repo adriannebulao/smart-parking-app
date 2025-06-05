@@ -7,7 +7,7 @@ import { jwtDecode } from "jwt-decode";
  * authentication and token refresh logic.
  */
 const api = axios.create({
-  baseURL: "",
+  baseURL: import.meta.env.VITE_API_URL || "",
 });
 
 /**

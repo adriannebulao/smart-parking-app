@@ -80,32 +80,42 @@ function AdminParkingLocations() {
         <div className="flex-grow overflow-auto space-y-2">
           {loading ? (
             <LoadingScreen />
+          ) : locations.length === 0 ? (
+            <p className="text-gray-500 px-2 py-4">
+              No parking locations found.
+            </p>
           ) : (
-            locations.map((loc) => (
-              <ParkingLocationCard
-                key={loc.id}
-                loc={loc}
-                onEdit={() => {
-                  setEditing(loc);
-                  setEditForm({ name: loc.name, slots: loc.slots });
+            <>
+              {locations.map((loc) => (
+                <ParkingLocationCard
+                  key={loc.id}
+                  loc={loc}
+                  onEdit={() => {
+                    setEditing(loc);
+                    setEditForm({ name: loc.name, slots: loc.slots });
+                  }}
+                  onDelete={() => setConfirmDelete(loc)}
+                />
+              ))}
+              <PaginationControls
+                onPrev={() => {
+                  loadParkingLocations(prevUrl);
+                  mainContentRef.current?.scrollIntoView({
+                    behavior: "smooth",
+                  });
                 }}
-                onDelete={() => setConfirmDelete(loc)}
+                onNext={() => {
+                  loadParkingLocations(nextUrl);
+                  mainContentRef.current?.scrollIntoView({
+                    behavior: "smooth",
+                  });
+                }}
+                hasPrev={!!prevUrl}
+                hasNext={!!nextUrl}
+                loading={loading}
               />
-            ))
+            </>
           )}
-          <PaginationControls
-            onPrev={() => {
-              loadParkingLocations(prevUrl);
-              mainContentRef.current?.scrollIntoView({ behavior: "smooth" });
-            }}
-            onNext={() => {
-              loadParkingLocations(nextUrl);
-              mainContentRef.current?.scrollIntoView({ behavior: "smooth" });
-            }}
-            hasPrev={!!prevUrl}
-            hasNext={!!nextUrl}
-            loading={loading}
-          />
         </div>
       </div>
 

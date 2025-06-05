@@ -60,9 +60,7 @@ function UserReservations() {
         {loading ? (
           <LoadingScreen />
         ) : reservations.length === 0 ? (
-          <div className="flex items-center justify-center flex-grow">
-            <p className="text-gray-500">No reservations found.</p>
-          </div>
+          <p className="text-gray-500 px-2 py-4">No reservations found.</p>
         ) : (
           <div className="flex flex-col flex-grow space-y-2 overflow-auto">
             {reservations.map((resv) => (

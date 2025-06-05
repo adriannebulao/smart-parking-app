@@ -52,7 +52,7 @@ function AdminReservations() {
         {loading ? (
           <LoadingScreen />
         ) : reservations.length === 0 ? (
-          <p>No reservations found.</p>
+          <p className="text-gray-500 px-2 py-4">No reservations found.</p>
         ) : (
           <div className="flex flex-col flex-grow space-y-2 overflow-auto">
             {reservations.map((resv) => (
@@ -60,7 +60,7 @@ function AdminReservations() {
                 key={resv.id}
                 resv={resv}
                 onCancel={setConfirmCancel}
-                showUser={true}
+                showUser={false}
               />
             ))}
 
