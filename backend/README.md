@@ -39,7 +39,6 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-
 5. Run database migrations
 
 ```
@@ -51,6 +50,8 @@ python manage.py migrate
 ```
 python manage.py runserver
 ```
+
+The server can be accessed at: http://127.0.0.1:8000/
 
 7. Create a Django superuser (admin)
 
@@ -69,4 +70,3 @@ python manage.py createsuperuser
    ```
    docker compose down
    ```
-

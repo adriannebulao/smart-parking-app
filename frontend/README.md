@@ -18,11 +18,13 @@ xcopy .env.sample .env
 npm install
 ```
 
-3. Run Vite development server
+3. Run the Vite development server
 
 ```
 npm run dev
 ```
+
+The server can be accessed at: http://localhost:5173/
 
 4. Stop the server
    Press `CTRL + C` in the terminal running Vite
