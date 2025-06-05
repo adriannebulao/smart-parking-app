@@ -22,7 +22,7 @@ function AdminLogin() {
             ADMIN LOGIN
           </h2>
         </div>
-        <Form route="/api/users/login/" method="login" userType="admin" />
+        <Form route="/api/admin/login/" method="login" userType="admin" />
       </div>
     </div>
   );

@@ -1,0 +1,16 @@
+.idea
+.vscode
+
+.venv
+__pycache__
+*.pyc
+
+.git
+.gitignore
+
+.env
+.env.sample
+
+docker-compose.yml
+
+README.md
