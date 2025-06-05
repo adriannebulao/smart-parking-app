@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import {
-  getReservations,
+  fetchReservations,
   cancelReservation,
 } from "../services/reservationService";
 import { buildReservationUrl } from "../utils/urlBuilder";
@@ -18,13 +18,17 @@ export function useReservations() {
   const [confirmCancel, setConfirmCancel] = useState(null);
 
   useEffect(() => {
-    fetchReservations(buildReservationUrl(statusFilter, search));
+    loadReservations(buildReservationUrl(statusFilter, search));
   }, [statusFilter, search]);
 
-  const fetchReservations = (url) => {
+  /**
+   * Loads reservations from the API and updates state.
+   * @param {string} url - The API endpoint to fetch reservations from.
+   */
+  const loadReservations = (url) => {
     if (!url) return;
     setLoading(true);
-    getReservations(url)
+    fetchReservations(url)
       .then((res) => {
         const sorted = sortReservations(
           res.data.results,
@@ -45,7 +49,7 @@ export function useReservations() {
     cancelReservation(reservation.id)
       .then(() => {
         toast.success("Reservation cancelled.");
-        fetchReservations(currentUrl);
+        loadReservations(currentUrl);
         setConfirmCancel(null);
       })
       .catch(() => toast.error("Failed to cancel reservation."));
@@ -62,7 +66,7 @@ export function useReservations() {
     setSearch,
     confirmCancel,
     setConfirmCancel,
-    fetchReservations,
+    loadReservations,
     cancel,
   };
 }

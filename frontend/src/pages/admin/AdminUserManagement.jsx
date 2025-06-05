@@ -21,7 +21,7 @@ function AdminUserManagement() {
     setSearch,
     statusFilter,
     setStatusFilter,
-    fetchUsers,
+    loadUsers,
     deactivate,
   } = useUserManagement();
 
@@ -69,11 +69,11 @@ function AdminUserManagement() {
 
             <PaginationControls
               onPrev={() => {
-                fetchUsers(prevUrl);
+                loadUsers(prevUrl);
                 mainContentRef.current?.scrollIntoView({ behavior: "smooth" });
               }}
               onNext={() => {
-                fetchUsers(nextUrl);
+                loadUsers(nextUrl);
                 mainContentRef.current?.scrollIntoView({ behavior: "smooth" });
               }}
               hasPrev={!!prevUrl}

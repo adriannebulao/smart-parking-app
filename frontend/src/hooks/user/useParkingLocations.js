@@ -3,6 +3,13 @@ import { toast } from "react-toastify";
 import { fetchParkingLocations } from "../../services/user/parkingLocationService";
 import { debounce } from "../../utils/debounce";
 
+/**
+ * Custom hook for fetching and managing parking locations for users.
+ * Handles searching, pagination, and loading state.
+ *
+ * @param {string} initialUrl - The initial API endpoint for fetching locations.
+ * @returns {Object} State and actions for parking locations.
+ */
 export function useParkingLocations(initialUrl = "/api/parking_locations/") {
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,7 +18,12 @@ export function useParkingLocations(initialUrl = "/api/parking_locations/") {
   const [currentUrl, setCurrentUrl] = useState(initialUrl);
   const [search, setSearch] = useState("");
 
-  const fetchAndSetLocations = (url, term = "") => {
+  /**
+   * Loads parking locations from the API and updates state.
+   * @param {string} url - The API endpoint to fetch locations from.
+   * @param {string} term - Optional search term.
+   */
+  const loadParkingLocations = (url, term = "") => {
     setLoading(true);
     fetchParkingLocations(url, term)
       .then((res) => {
@@ -24,23 +36,33 @@ export function useParkingLocations(initialUrl = "/api/parking_locations/") {
       .finally(() => setLoading(false));
   };
 
+  /**
+   * Debounced fetch to avoid excessive API calls on search input.
+   */
   const debouncedFetch = useCallback(
     debounce((value) => {
-      fetchAndSetLocations(initialUrl, value);
+      loadParkingLocations(initialUrl, value);
     }, 400),
     [initialUrl]
   );
 
+  // Fetch locations when search changes
   useEffect(() => {
     debouncedFetch(search);
   }, [search, debouncedFetch]);
 
+  /**
+   * Loads the next page of locations if available.
+   */
   const goNext = () => {
-    if (nextUrl) fetchAndSetLocations(nextUrl, search);
+    if (nextUrl) loadParkingLocations(nextUrl, search);
   };
 
+  /**
+   * Loads the previous page of locations if available.
+   */
   const goPrev = () => {
-    if (prevUrl) fetchAndSetLocations(prevUrl, search);
+    if (prevUrl) loadParkingLocations(prevUrl, search);
   };
 
   return {
@@ -53,6 +75,6 @@ export function useParkingLocations(initialUrl = "/api/parking_locations/") {
     setSearch,
     goNext,
     goPrev,
-    fetchAndSetLocations,
+    loadParkingLocations,
   };
 }

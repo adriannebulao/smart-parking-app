@@ -20,7 +20,7 @@ function UserReservations() {
     setStatusFilter,
     search,
     setSearch,
-    fetchReservations,
+    loadReservations,
     cancel,
   } = useReservations();
 
@@ -76,11 +76,11 @@ function UserReservations() {
 
             <PaginationControls
               onPrev={() => {
-                fetchReservations(prevUrl);
+                loadReservations(prevUrl);
                 mainContentRef.current?.scrollIntoView({ behavior: "smooth" });
               }}
               onNext={() => {
-                fetchReservations(nextUrl);
+                loadReservations(nextUrl);
                 mainContentRef.current?.scrollIntoView({ behavior: "smooth" });
               }}
               hasPrev={!!prevUrl}

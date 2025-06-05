@@ -20,7 +20,7 @@ function AdminParkingLocations() {
     prevUrl,
     search,
     setSearch,
-    fetchLocations,
+    loadParkingLocations,
     create,
     update,
     remove,
@@ -95,11 +95,11 @@ function AdminParkingLocations() {
           )}
           <PaginationControls
             onPrev={() => {
-              fetchLocations(prevUrl);
+              loadParkingLocations(prevUrl);
               mainContentRef.current?.scrollIntoView({ behavior: "smooth" });
             }}
             onNext={() => {
-              fetchLocations(nextUrl);
+              loadParkingLocations(nextUrl);
               mainContentRef.current?.scrollIntoView({ behavior: "smooth" });
             }}
             hasPrev={!!prevUrl}

@@ -2,10 +2,16 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { buildUserManagementUrl } from "../../utils/urlBuilder";
 import {
-  getUsers,
+  fetchUsers,
   deactivateUser,
 } from "../../services/admin/userManagementService";
 
+/**
+ * Custom hook for managing users in the admin panel.
+ * Handles fetching, searching, filtering, and deactivating users.
+ *
+ * @returns {Object} State and actions for user management.
+ */
 export function useUserManagement() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,14 +24,19 @@ export function useUserManagement() {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
+    // Build the API URL based on current filters and search
     const url = buildUserManagementUrl(statusFilter, search);
-    fetchUsers(url);
+    loadUsers(url);
   }, [statusFilter, search]);
 
-  const fetchUsers = (url) => {
+  /**
+   * Loads users from the API and updates state.
+   * @param {string} url - The API endpoint to fetch users from.
+   */
+  const loadUsers = (url) => {
     if (!url) return;
     setLoading(true);
-    getUsers(url)
+    fetchUsers(url)
       .then((res) => {
         setUsers(res.data.results);
         setNextUrl(res.data.next);
@@ -36,11 +47,16 @@ export function useUserManagement() {
       .finally(() => setLoading(false));
   };
 
+  /**
+   * Deactivates a user and refreshes the user list.
+   * @param {Object} user - The user object to deactivate.
+   * @param {Function} onSuccess - Optional callback on success.
+   */
   const deactivate = (user, onSuccess) => {
     deactivateUser(user.id)
       .then(() => {
         toast.success(`User ${user.username} deactivated.`);
-        fetchUsers(currentUrl);
+        loadUsers(currentUrl);
         if (onSuccess) onSuccess();
       })
       .catch(() => toast.error("Failed to deactivate user."));
@@ -55,7 +71,7 @@ export function useUserManagement() {
     setSearch,
     statusFilter,
     setStatusFilter,
-    fetchUsers,
+    loadUsers,
     deactivate,
   };
 }
