@@ -60,7 +60,7 @@ function AdminReservations() {
                 key={resv.id}
                 resv={resv}
                 onCancel={setConfirmCancel}
-                showUser={false}
+                showUser={true}
               />
             ))}
 
